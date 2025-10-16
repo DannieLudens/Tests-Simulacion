@@ -78,81 +78,117 @@
 >
 > Documentación de la API de Matter.js (para profundizar).
 Otros tutoriales o ejemplos que encuentres.
-Pasos:
 
-Visualiza y lee: mira el video de Patt Vira completo. Explora los ejemplos básicos en el sitio web de Matter.js.
-Identifica conceptos clave: mientras exploras, presta atención a estos conceptos fundamentales: Engine, World, Bodies (y sus tipos: rectángulos, círculos, polígonos), Constraint, MouseConstraint, Runner/Events.
-Experimenta con código:
-Intenta replicar en p5.js al menos dos experimentos básicos mostrados en el video de Patt Vira o en los ejemplos del sitio web. Por ejemplo:
-Crear un mundo con gravedad y añadir algunos cuerpos simples (círculos, cajas) que caigan y colisionen.
-Crear cuerpos estáticos (como el suelo).
-Implementar MouseConstraint para poder interactuar con los cuerpos usando el mouse.
-(Opcional avanzado) Crear una restricción simple (Constraint) entre dos cuerpos.
-Explica los conceptos: basándote en tu experimentación y lectura, explica con tus propias palabras qué es y para qué sirve cada uno de los conceptos clave listados en el paso 2 (Engine, World, Bodies, Constraint, MouseConstraint).
-🧐🧪✍️ Reporta en tu bitácora
 
-Muestra el código de los dos (o más) experimentos básicos que replicaste integrando Matter.js y p5.js.
-Incluye una **captura de pantalla o ENLACE a un GIF (no olvides, enlace) de cada experimento funcionando.
-Proporciona tu explicación clara y concisa de los conceptos clave (Engine, World, Bodies, Constraint, MouseConstraint).
-Menciona brevemente cualquier dificultad encontrada al configurar o usar Matter.js inicialmente.
-Apply: Aplicación 🛠
-¡A Animar palabras!
+**Pasos:**
 
-Es el momento de combinar inspiración, física y código. Aplicarás el concepto de “Word as Image” y tus nuevos conocimientos de Matter.js para crear una animación generativa donde una palabra cobra vida según su significado.
+1. **Visualiza y lee:** mira el video de Patt Vira completo. Explora los ejemplos básicos en el sitio web de Matter.js.
 
-Actividad 03
-Animando la tipografía semántica
-🎯 Enunciado
+2. **Identifica conceptos clave:** mientras exploras, presta atención a estos conceptos fundamentales: `Engine`, `World`, `Bodies` (y sus tipos: rectángulos, círculos, polígonos), `Constraint`, `MouseConstraint`, `Runner`/`Events`.
 
-¡Es hora de aplicar todo! Elige una palabra y, usando p5.js y Matter.js, crea una animación donde la palabra “actúe” o se comporte físicamente de una manera que refleje su significado, inspirándote en el concepto “Word as Image”.
+3. **Experimenta con código:**
 
-Recursos
+- Intenta replicar en p5.js al menos dos experimentos básicos mostrados en el video de Patt Vira o en los ejemplos del sitio web.
+  
+  Por ejemplo:
 
-Tus ideas estáticas de la Actividad 01.
-Tu conocimiento y código de experimentación de Matter.js (Actividad 02).
-Documentación de Matter.js.
-Tu creatividad y habilidades de p5.js.
-Pasos:
+    - Crear un mundo con gravedad y añadir algunos cuerpos simples (círculos, cajas) que caigan y colisionen.
+    - Crear cuerpos estáticos (como el suelo).
+    - Implementar `MouseConstraint` para poder interactuar con los cuerpos usando el mouse.
+    - (Opcional avanzado) Crear una restricción simple (`Constraint`) entre dos cuerpos.
+ 
+4. **Explica los conceptos:** basándote en tu experimentación y lectura, explica con tus propias palabras qué es y para qué sirve cada uno de los conceptos clave listados en el paso 2 (`Engine`, `World`, `Bodies`, `Constraint`, `MouseConstraint`).
 
-Elige tu palabra: selecciona una palabra cuyo significado te inspire una idea de animación física (ej: “caer”, “flotar”, “romper”, “elástico”, “rígido”, “conectar”, “repeler”).
-Diseña la animación física:
-¿Cómo representarás la palabra? ¿Usarás cuerpos de Matter.js para formar las letras?
-¿Qué comportamiento físico (caída, flotación, colisión, elasticidad, ruptura, conexión) representará el significado?
-¿Cómo configurarás el mundo de Matter.js (gravedad, límites) y las propiedades de los cuerpos (masa, fricción, restitución/elasticidad) para lograr ese comportamiento?
-¿Habrá alguna interacción del usuario (ej: click para iniciar la acción, mouse para perturbar)?
-Implementa en p5.js + Matter.js: escribe el código.
-Configura el motor y mundo de Matter.js.
-Crea los cuerpos (Bodies) que forman tu palabra. Esto puede requerir paciencia y experimentación para obtener las formas deseadas. Usa Constraint si necesitas unir partes.
-Define las propiedades físicas y las condiciones iniciales.
+> [!NOTE]
+> 🧐🧪✍️ Reporta en tu bitácora
+>
+> 1. Muestra el **código** de los **dos (o más)** experimentos básicos que replicaste integrando Matter.js y p5.js.
+> 2. Incluye una **captura de pantalla o **ENLACE** a un GIF (**no olvides, enlace**) de cada experimento funcionando.
+> 3. Proporciona tu **explicación clara y concisa** de los conceptos clave (`Engine`, `World`, `Bodies`, `Constraint`, `MouseConstraint`).
+> 4. Menciona brevemente cualquier dificultad encontrada al configurar o usar Matter.js inicialmente.
+>
+
+## Apply: Aplicación 🛠
+
+> [!NOTE]
+> ¡A Animar palabras!
+>
+> Es el momento de combinar inspiración, física y código. Aplicarás el concepto de “Word as Image” y tus nuevos conocimientos de Matter.js para crear una animación generativa donde una palabra cobra vida según su significado.
+
+### Actividad 03
+
+#### Animando la tipografía semántica
+
+> [!NOTE]
+> 🎯 Enunciado
+>
+> ¡Es hora de aplicar todo! Elige una palabra y, usando p5.js y Matter.js, crea una animación donde la palabra “actúe” o se comporte físicamente de una manera que refleje su significado, inspirándote en el concepto “Word as Image”.
+
+> [!TIP]
+> Recursos
+>
+> - Tus ideas estáticas de la Actividad 01.
+> - Tu conocimiento y código de experimentación de Matter.js (Actividad 02).
+> - Documentación de Matter.js.
+> - Tu creatividad y habilidades de p5.js.
+>
+
+**Pasos:**
+
+1. **Elige tu palabra:** selecciona una palabra cuyo significado te inspire una idea de animación física (ej: “caer”, “flotar”, “romper”, “elástico”, “rígido”, “conectar”, “repeler”).
+
+2. **Diseña la animación física:**
+
+  - ¿Cómo representarás la palabra? ¿Usarás cuerpos de Matter.js para formar las letras?
+  - ¿Qué **comportamiento físico** (caída, flotación, colisión, elasticidad, ruptura, conexión) representará el significado?
+  - ¿Cómo configurarás el mundo de Matter.js (gravedad, límites) y las propiedades de los cuerpos (masa, fricción, restitución/elasticidad) para lograr ese comportamiento?
+  - ¿Habrá alguna interacción del usuario (ej: click para iniciar la acción, mouse para perturbar)?
+
+3. **Implementa en p5.js + Matter.js:** escribe el código.
+   - Configura el motor y mundo de Matter.js.
+   - Crea los cuerpos (`Bodies`) que forman tu palabra. Esto puede requerir paciencia y experimentación para obtener las formas deseadas. Usa `Constraint` si necesitas unir partes.
+   - Define las propiedades físicas y las condiciones iniciales.
 Implementa la interacción si la diseñaste.
-Dibuja los cuerpos de Matter.js en el canvas de p5.js en cada frame.
-Prueba y Refina: ejecuta tu sketch repetidamente. Ajusta la gravedad, las propiedades de los cuerpos, las restricciones y cualquier otro parámetro hasta que la animación física comunique efectivamente el significado de la palabra de una manera interesante.
-🧐🧪✍️ Reporta en tu bitácora
+   - Dibuja los cuerpos de Matter.js en el canvas de p5.js en cada frame.
 
-Indica claramente la palabra elegida.
-Explica tu idea conceptual: ¿Cómo la animación física representa el significado de la palabra?
-Describe brevemente los aspectos técnicos clave de tu implementación: ¿Cómo formaste las letras con Matter.js? ¿Qué propiedades físicas fueron importantes? ¿Usaste restricciones?
-Incluye el código completo de tu sketch final.
-Inserta una captura de pantalla estática Y un enlace a un GIF animado (¡Esencial!) que muestre tu tipografía semántica animada en acción.
-Evidencias 🗂️
-RUBRICA!
+4. **Prueba y Refina:** ejecuta tu sketch repetidamente. Ajusta la gravedad, las propiedades de los cuerpos, las restricciones y cualquier otro parámetro hasta que la animación física comunique efectivamente el significado de la palabra de una manera interesante.
 
-Recuerda que la bitácora se cierra 10 minutos antes de iniciar la sesión de evaluación de la unidad (segunda sesión de la segunda semana). plasma en la bitácora. La bitácora no es un resultado que se llena a última hora.
-Si no realizas la autoevaluación tu nota será 0.
-Si una actividad no está COMPLETA debes multiplicar la nota de esa actividad por el porcentaje de avance que tengas.
-Puedes usar IA generativa para generar código, pero NO para DISEÑAR.
-Rúbrica de evaluación del proceso
+> [!NOTE]
+> 🧐🧪✍️ Reporta en tu bitácora
+>
+> 1. Indica claramente la palabra elegida.
+> 2. Explica tu idea conceptual: ¿Cómo la animación física representa el significado de la palabra?
+> 3. Describe brevemente los aspectos técnicos clave de tu implementación: ¿Cómo formaste las letras con Matter.js? ¿Qué propiedades físicas fueron importantes? ¿Usaste restricciones?
+> 4. Incluye el código completo de tu sketch final.
+> 5. Inserta una captura de pantalla estática Y un enlace a un GIF animado (¡Esencial!) que muestre tu tipografía semántica animada en acción.
 
-5: realicé las 3 actividades completas y la autoevaluación.
-4: realicé 2 actividades completas y la autoevaluación.
-2: realicé 1 actividad completa y la autoevaluación.
-0: no realicé ninguna actividad o no realicé la autoevaluación.
+### Evidencias 🗂️
 
-EVIDENCIAS EN BITÁCORA
+> [!NOTE]
+> RUBRICA!
+>
+> - Recuerda que la bitácora se cierra 10 minutos antes de iniciar la sesión de evaluación de la unidad (segunda sesión de la segunda semana). plasma en la bitácora. La bitácora no es un resultado que se llena a última hora.
+> - Si no realizas la autoevaluación tu nota será 0.
+> - Si una actividad no está COMPLETA debes multiplicar la nota de esa actividad por el porcentaje de avance que tengas.
+> - Puedes usar IA generativa para generar código, pero NO para DISEÑAR.
+> 
+> **Rúbrica de evaluación del proceso**
+>
+> 5: realicé las 3 actividades completas y la autoevaluación.
+> 4: realicé 2 actividades completas y la autoevaluación.
+> 2: realicé 1 actividad completa y la autoevaluación.
+> 0: no realicé ninguna actividad o no realicé la autoevaluación.
 
-Realiza las actividades propuestas en esta unidad y documenta todo el proceso en tu bitácora.
-Realiza la autoevaluación indicando:
-Tu nota propuesta.
-La defensa de esa nota para cada actividad.
-Reflect: Consolidación y metacognición 🤔
+> [!WARNING]
+>
+> EVIDENCIAS EN BITÁCORA
+>
+> 1. Realiza las actividades propuestas en esta unidad y documenta todo el proceso en tu bitácora.
+> 2. Realiza la autoevaluación indicando:
+>    - Tu nota propuesta.
+>    - La defensa de esa nota para cada actividad.
+>   
+
+## Reflect: Consolidación y metacognición 🤔
+
 En esta unidad te mostré que los conceptos del curso pueden llevarse al mundo del diseño gráfico y la tipografía. Quiero invitarte a pensar en cómo podrías aplicar estos conceptos en tu propio interés o énfasis profesional. Y qué tal si lo que aprendiste en esta unidad intentas aplicarlo en tu portafolio profesional? Tal vez en la página web de tu portafolio? Y si no tienes una página web para tu portafolio qué tal si te animas a hacer una?
