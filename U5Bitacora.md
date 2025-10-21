@@ -240,7 +240,7 @@ class Particle {
 
 📸 **Resultados visuales**
 
-**Observaciones visuales:**
+**visuales:**
 - ✅ El efecto de rastro (`background(255, 25)`) crea líneas suaves que revelan las trayectorias
 - ✅ Los colores azules (#96C8FF aproximadamente) sugieren agua o aire
 - ✅ El movimiento es hipnótico y natural, no mecánico
@@ -258,27 +258,580 @@ class Particle {
 |-----|-----|
 |<img width="400" src="https://github.com/user-attachments/assets/e868d5d8-5495-4295-91e9-561cf48002d6">|<img width="400" src="https://github.com/user-attachments/assets/0d5a3814-883d-4f54-a78d-1945d691ccea">|
 
-<details>
-  <summary> a System of Systems Modificado</summary>
 
-#### 2.  a System of Systems Modificado
+<details>
+  <summary>Ejemplo 4.4 - Sistema de Sistemas (a System of Systems)</summary>
+
+#### Ejemplo 4.4 - Sistema de Sistemas (a System of Systems)
+
+---
+
+<details>
+  <summary>🔍 Gestión de memoria</summary>
+
+Este ejemplo introduce un concepto más complejo: **un sistema de sistemas**, o un array de emisores donde cada emisor tiene su propio array de partículas.
+
+**1. Creación de emisores:**
+```javascript
+function mousePressed() {
+  emitters.push(new Emitter(mouseX, mouseY));
+}
+```
+- Cada clic del mouse crea un **nuevo emisor** en esa posición
+- Los emisores se agregan al array `emitters[]`
+- Cada emisor es independiente y tiene su propia posición de origen
+
+**2. Creación de partículas dentro de cada emisor:**
+```javascript
+emitter.addParticle();  // Llamado para cada emisor en draw()
+```
+- Cada emisor agrega partículas a su **propio** array interno `this.particles[]`
+- Las partículas nacen en la posición `origin` del emisor
+
+**3. Desaparición de partículas:**
+```javascript
+for (let i = this.particles.length - 1; i >= 0; i--) {
+  let p = this.particles[i];
+  p.run();
+  if (p.isDead()) {
+    this.particles.splice(i, 1);  // Elimina partícula individual
+  }
+}
+```
+- Cada emisor gestiona la eliminación de **sus propias partículas muertas**
+- Se usa `splice()` al recorrer el array hacia atrás
+
+**4. Observación:**
+- **Los emisores NUNCA se eliminan**: El array `emitters[]` crece indefinidamente  
+- Si haces 100 clics, tendrás 100 emisores activos
+- Aunque sus partículas mueran, el emisor sigue existiendo
+- Solución ideal: eliminar emisores cuando ya no tengan partículas vivas
+
+**Diagrama de estructura:**
+```
+emitters[] (Array de Emisores)
+   ↓
+   ├─ Emitter 1
+   │    └─ particles[] → [Particle, Particle, Particle...]
+   │
+   ├─ Emitter 2
+   │    └─ particles[] → [Particle, Particle...]
+   │
+   └─ Emitter 3
+        └─ particles[] → [Particle, Particle, Particle, Particle...]
+```
+
+**Gestión de memoria en dos niveles:**
+1. **Nivel superior**: Emisores en el array global `emitters[]`
+2. **Nivel inferior**: Partículas en el array interno de cada emisor `this.particles[]`
+
+</details>
+
+---
+
+<details>
+  <summary>🧪 Concepto aplicado: Normalización de Vectores (Unidad 2)</summary>
+
+#### Experimento: Control de dirección con vectores normalizados
+
+**¿Por qué elegí este concepto?**
+
+En el ejemplo original, las partículas tienen velocidades aleatorias sin control direccional:
+```javascript
+this.velocity = createVector(random(-2, 2), random(-3, 0));
+```
+
+Quería que las partículas explotaran en **todas las direcciones radialmente** desde el emisor, como erupcion de volcanes reales, manteniendo velocidades consistentes.
+
+**¿Cómo lo implementé?**
+
+**Paso 1: Generar un vector desde un ángulo aleatorio**
+```javascript
+let angle = random(TWO_PI);  // Ángulo aleatorio de 0 a 360°
+this.velocity = p5.Vector.fromAngle(angle);
+```
+- `fromAngle()` crea un vector unitario (magnitud = 1) apuntando en el ángulo especificado
+- Esto garantiza que todas las partículas apunten en direcciones diferentes
+
+**Paso 2: Normalizar para garantizar magnitud = 1**
+```javascript
+this.velocity.normalize();  // Asegura magnitud exactamente 1
+```
+- Aunque `fromAngle()` ya crea vectores normalizados, esta línea es una buena práctica
+- La normalización convierte cualquier vector a magnitud 1 manteniendo su dirección
+
+**Paso 3: Escalar a la velocidad deseada**
+```javascript
+this.velocity.mult(random(1, 4));  // Velocidad entre 1 y 4
+```
+- Multiplica el vector normalizado por un escalar
+- Esto mantiene la dirección pero ajusta la rapidez
+
+**Concepto matemático:**
+
+Un vector normalizado tiene **magnitud = 1**:
+```
+v = (x, y)
+magnitud = √(x² + y²) = 1
+
+Normalización: v̂ = v / |v|
+```
+
+Esto es útil porque:
+- ✅ Separa **dirección** (el vector normalizado) de **velocidad** (el escalar)
+- ✅ Permite control independiente de ambos aspectos
+- ✅ Evita velocidades inconsistentes por valores aleatorios extremos
+
+**Comparación visual:**
+
+| Sin normalización | Con normalización |
+|-------------------|-------------------|
+| Velocidades aleatorias en X e Y | Explosión radial uniforme |
+| Algunas partículas más rápidas | Control preciso de velocidad |
+| Dirección sesgada | Distribución equitativa en 360° |
+
+**Comparación con random():**
+- `random()`: Crea vectores con componentes X e Y independientes, sin control de dirección
+- `fromAngle() + normalize()`: Control total sobre dirección y velocidad por separado
+
+</details>
+
+---
+
+<details>
+  <summary>💻 Código fuente completo</summary>
+
+```javascript
+let emitters = [];
+
+function setup() {
+  createCanvas(640, 240);
+}
+
+function draw() {
+  background(255);
+  
+  // Recorrer todos los emisores
+  for (let emitter of emitters) {
+    emitter.run();
+    emitter.addParticle();
+  }
+  
+  // Mostrar info
+  fill(0);
+  noStroke();
+  text(`Emisores: ${emitters.length}`, 10, 20);
+  text(`Click para crear emisor`, 10, 40);
+}
+
+function mousePressed() {
+  emitters.push(new Emitter(mouseX, mouseY));
+}
+
+// ========================================
+// CLASE EMITTER
+// ========================================
+class Emitter {
+  constructor(x, y) {
+    this.origin = createVector(x, y);
+    this.particles = [];
+  }
+  
+  addParticle() {
+    this.particles.push(new Particle(this.origin.x, this.origin.y));
+  }
+  
+  run() {
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      let p = this.particles[i];
+      p.run();
+      
+      if (p.isDead()) {
+        this.particles.splice(i, 1);
+      }
+    }
+  }
+}
+
+// ========================================
+// CLASE PARTICLE CON VECTORES NORMALIZADOS
+// ========================================
+class Particle {
+  constructor(x, y) {
+    this.position = createVector(x, y);
+    
+    // 🆕 NOVEDAD: Usar normalización para control direccional
+    let angle = random(TWO_PI);  // Ángulo aleatorio en 360°
+    this.velocity = p5.Vector.fromAngle(angle);  // Vector unitario
+    this.velocity.normalize();  // Asegurar magnitud = 1
+    this.velocity.mult(random(1, 4));  // Escalar a velocidad deseada
+    
+    this.acceleration = createVector(0, 0.05);  // Gravedad
+    this.lifespan = 255;
+  }
+  
+  run() {
+    this.update();
+    this.show();
+  }
+  
+  update() {
+    this.velocity.add(this.acceleration);
+    this.position.add(this.velocity);
+    this.lifespan -= 2;
+  }
+  
+  show() {
+    stroke(255, 100, 150, this.lifespan);
+    strokeWeight(2);
+    fill(255, 150, 200, this.lifespan);
+    circle(this.position.x, this.position.y, 8);
+  }
+  
+  isDead() {
+    return this.lifespan < 0;
+  }
+}
+```
+
+**🔗 Enlace p5.js:** [Ver código en vivo](https://editor.p5js.org/DanieLudens/sketches/iKfXE60bT) 
+
+</details>
+
+---
+
+📸 **Resultados visuales**
+
+**visuales:**
+- ✅ **Simetría radial**: Las partículas se distribuyen uniformemente en todas las direcciones
+- ✅ **Control de velocidad**: Todas las partículas tienen velocidades dentro del rango especificado (1-4)
+- ✅ **Efecto de fuegos artificiales**: Cada clic crea una "explosión" visualmente satisfactoria
+- ✅ **Colores rosados**: Paleta diferente para distinguir este ejemplo del anterior
+
+**Diferencias clave:**
+- **Sin normalización:** Las velocidades aleatorias pueden crear sesgos direccionales
+- **Con normalización:** Explosión perfectamente simétrica desde el punto de origen
 
 </details>
 
 |Original|Modificado|
 |-----|-----|
-|<img width="400" src="https://github.com/user-attachments/assets/e868d5d8-5495-4295-91e9-561cf48002d6">|<img width="400" src="https://github.com/user-attachments/assets/0d5a3814-883d-4f54-a78d-1945d691ccea">|
+|<img width="400" src="https://github.com/user-attachments/assets/21a05e24-64f3-4809-81ec-ee9b94782b50">|<img width="400" src="https://github.com/user-attachments/assets/3e6148c1-0ae3-41c1-ab2f-4c9097134a4b">|
+
+
+
+
 
 <details>
-  <summary>a Particle System with Inheritance and Polymorphism Modificado</summary>
+  <summary>Ejemplo 4.5 - Herencia y Polimorfismo (a Particle System with Inheritance and Polymorphism)</summary>
 
-#### 3. a Particle System with Inheritance and Polymorphism Modificado
+#### Ejemplo 4.5 - Herencia y Polimorfismo (a Particle System with Inheritance and Polymorphism)
+
+---
+
+<details>
+  <summary>🔍 Gestión de memoria</summary>
+
+Este ejemplo mantiene la misma gestión de memoria que ejemplos anteriores, pero introduce una diferencia importante: **un solo array contiene DOS tipos diferentes de objetos**.
+
+**1. Creación de partículas de diferentes tipos:**
+```javascript
+addParticle() {
+  let r = random(1);
+  if (r < 0.5) {
+    this.particles.push(new Particle(this.origin.x, this.origin.y));
+  } else {
+    this.particles.push(new Confetti(this.origin.x, this.origin.y));
+  }
+}
+```
+- 50% de probabilidad de crear una `Particle` (círculo)
+- 50% de probabilidad de crear un `Confetti` (cuadrado rotado)
+- Ambos tipos se agregan al **mismo array** `particles[]`
+
+**2. Polimorfismo en el array:**
+```javascript
+this.particles = [Particle, Confetti, Particle, Confetti, Particle, ...];
+```
+- JavaScript permite mezclar tipos de objetos en un array
+- Gracias a la herencia, ambos son tratados como tipo `Particle`
+- Cada objeto mantiene su comportamiento único (círculos vs cuadrados)
+
+**3. Desaparición - Sin cambios:**
+```javascript
+if (particle.isDead()) {
+  this.particles.splice(i, 1);
+}
+```
+- El método `isDead()` es **heredado** de la clase `Particle`
+- Funciona igual para `Particle` y `Confetti`
+- No importa el tipo, todos se eliminan de la misma manera
+
+**4. Observación sobre herencia:**
+La clase `Confetti` NO necesita su propio `isDead()` ni `update()`:
+- ✅ **Hereda** `isDead()` de `Particle`
+- ✅ **Hereda** `update()` de `Particle`
+- ✅ Solo **sobrescribe** `show()` para cambiar la apariencia
+
+**Diagrama de herencia:**
+```
+Particle (Clase Padre)
+   ├─ position, velocity, acceleration, lifespan
+   ├─ update()
+   ├─ isDead()
+   └─ show() → dibuja círculo
+        ↓
+   Confetti (Clase Hija) extends Particle
+   ├─ HEREDA: position, velocity, acceleration, lifespan
+   ├─ HEREDA: update(), isDead()
+   └─ SOBRESCRIBE: show() → dibuja cuadrado rotado
+```
 
 </details>
 
+---
+
+<details>
+  <summary>🧪 Concepto aplicado: Fricción/Resistencia del Aire (Unidad 3)</summary>
+
+**Experimento: Fricción para desacelerar partículas**
+
+**¿Por qué elegí este concepto?**
+
+En el ejemplo original, las partículas mantienen su velocidad constante (solo afectadas por gravedad). Quería agregar **resistencia del aire** para que las partículas se desaceleren gradualmente, simulando un comportamiento más realista.
+
+**¿Cómo lo implementé?**
+
+La fricción es una fuerza que se opone al movimiento. Su magnitud es proporcional a la velocidad del objeto:
+
+**Fórmula de fricción:**
+```
+fricción = -μ × velocidad × |velocidad|
+```
+Donde:
+- `μ` (mu) = coeficiente de fricción
+- La fricción apunta en dirección **opuesta** a la velocidad
+- Es proporcional al **cuadrado** de la velocidad
+
+**Implementación en código:**
+
+**Paso 1: Crear el método applyFriction() en Particle**
+```javascript
+applyFriction() {
+  let friction = this.velocity.copy();  // Copiar vector velocidad
+  friction.normalize();                  // Obtener dirección (magnitud = 1)
+  friction.mult(-1);                     // Invertir (opuesta al movimiento)
+  
+  let c = 0.01;  // Coeficiente de fricción
+  let speed = this.velocity.mag();       // Obtener velocidad actual
+  friction.mult(c * speed);              // Fricción proporcional a velocidad
+  
+  this.acceleration.add(friction);       // Aplicar como fuerza
+}
+```
+
+**Explicación detallada del código:**
+1. `velocity.copy()` - Copia el vector para no modificar el original
+2. `normalize()` - Convierte a vector unitario (magnitud = 1) para obtener solo la dirección
+3. `mult(-1)` - Invierte la dirección (fricción opuesta al movimiento)
+4. `velocity.mag()` - Obtiene la magnitud/velocidad actual
+5. `mult(c * speed)` - Escala la fricción proporcionalmente a la velocidad
+6. `acceleration.add()` - Suma la fricción a la aceleración total
+
+**Paso 2: Llamar applyFriction() en update()**
+```javascript
+update() {
+  this.applyFriction();  // 1. Aplicar fricción primero
+  this.velocity.add(this.acceleration);  // 2. Actualizar velocidad
+  this.position.add(this.velocity);      // 3. Actualizar posición
+  this.acceleration.mult(0);              // 4. Resetear aceleración
+  this.lifespan -= 2;                     // 5. Reducir tiempo de vida
+}
+```
+
+**Comparación visual:**
+
+| Sin fricción | Con fricción (c = 0.01) |
+|--------------|-------------------------|
+| Partículas mantienen velocidad | Partículas se desaceleran gradualmente |
+| Trayectorias largas y rectas | Trayectorias que se "frenan" |
+| Movimiento constante | Movimiento más natural y realista |
+
+**Nota técnica:**
+
+La implementación actual usa fricción proporcional a la velocidad (`F = c × v`). En física real, la resistencia del aire es proporcional a `v²`. Aquí está la comparación:
+
+```javascript
+// Implementación actual (más simple)
+friction.mult(c * speed);  // F ∝ v
+
+// Implementación más realista (opcional)
+friction.mult(c * speed * speed);  // F ∝ v²
+```
+
+La versión con `v²` produce una desaceleración más dramática a altas velocidades, pero puede ser visualmente menos sutil.
+
+</details>
+
+---
+
+<details>
+  <summary>💻 Código fuente completo</summary>
+
+```javascript
+let emitter;
+
+function setup() {
+  createCanvas(640, 240);
+  emitter = new Emitter(width / 2, 50);
+}
+
+function draw() {
+  background(255);
+  emitter.addParticle();
+  emitter.run();
+  
+  // Info
+  fill(0);
+  noStroke();
+  text(`Partículas: ${emitter.particles.length}`, 10, 20);
+}
+
+// ========================================
+// CLASE EMITTER
+// ========================================
+class Emitter {
+  constructor(x, y) {
+    this.origin = createVector(x, y);
+    this.particles = [];
+  }
+  
+  addParticle() {
+    let r = random(1);
+    if (r < 0.5) {
+      this.particles.push(new Particle(this.origin.x, this.origin.y));
+    } else {
+      this.particles.push(new Confetti(this.origin.x, this.origin.y));
+    }
+  }
+  
+  run() {
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      let particle = this.particles[i];
+      particle.run();
+      
+      if (particle.isDead()) {
+        this.particles.splice(i, 1);
+      }
+    }
+  }
+}
+
+// ========================================
+// CLASE PARTICLE CON FRICCIÓN
+// ========================================
+class Particle {
+  constructor(x, y) {
+    this.position = createVector(x, y);
+    this.velocity = createVector(random(-1, 1), random(4, 0));  // 🆕 Velocidad inicial alta para ver fricción
+    this.acceleration = createVector(0, 0.05);
+    this.lifespan = 255;
+  }
+  
+  run() {
+    this.update();
+    this.show();
+  }
+  
+  // 🆕 MÉTODO DE FRICCIÓN
+  applyFriction() {
+    let friction = this.velocity.copy();  // Copiar el vector velocidad
+    friction.normalize();                  // Convertir a vector unitario
+    friction.mult(-1);                     // Invertir dirección (opuesta al movimiento)
+    
+    let c = 0.01;  // Coeficiente de fricción
+    let speed = this.velocity.mag();       // Obtener magnitud de velocidad
+    friction.mult(c * speed);              // Fricción proporcional a velocidad
+    
+    this.acceleration.add(friction);       // Aplicar fricción como fuerza
+  }
+  
+  update() {
+    this.applyFriction();  // 🆕 Aplicar fricción primero
+    this.velocity.add(this.acceleration);  // Actualizar velocidad con aceleración
+    this.position.add(this.velocity);      // Actualizar posición con velocidad
+    this.acceleration.mult(0);              // Resetear aceleración para el próximo frame
+    this.lifespan -= 2;                     // Reducir tiempo de vida
+  }
+  
+  show() {
+    stroke(0, this.lifespan);
+    strokeWeight(2);
+    fill(127, this.lifespan);
+    circle(this.position.x, this.position.y, 12);
+  }
+  
+  isDead() {
+    return this.lifespan < 0;
+  }
+}
+
+// ========================================
+// CLASE CONFETTI (HEREDA FRICCIÓN)
+// ========================================
+class Confetti extends Particle {
+  constructor(x, y) {
+    super(x, y);
+    // Confetti automáticamente hereda applyFriction()
+  }
+  
+  // Sobrescribe solo show() para cambiar apariencia
+  show() {
+    let angle = map(this.position.x, 0, width, 0, TWO_PI * 2);
+    
+    stroke(0, this.lifespan);
+    strokeWeight(2);
+    fill(175, 0, 175, this.lifespan);  // Color morado para distinguir
+    
+    push();
+    translate(this.position.x, this.position.y);
+    rotate(angle);
+    rectMode(CENTER);
+    square(0, 0, 12);
+    pop();
+  }
+}
+```
+
+**🔗 Enlace p5.js:** [Ver en vivo](https://editor.p5js.org/DanieLudens/sketches/Mvsl_dgqN)
+
+</details>
+
+---
+
+📸 **Resultados visuales**
+
+**visuales:**
+- ✅ **Dos tipos de partículas**: Círculos grises y cuadrados morados rotados
+- ✅ **Desaceleración muy visible**: Las partículas empiezan cayendo rápido y se frenan notoriamente
+- ✅ **Efecto realista**: Simula resistencia del aire de manera convincente
+- ✅ **Velocidad inicial alta**: Con `random(4, 0)` el efecto de fricción es dramático
+
+**Diferencias clave:**
+- **Sin fricción:** Partículas mantienen velocidad constante, caen en líneas casi rectas
+- **Con fricción + velocidad alta:** Partículas se desaceleran progresivamente, creando trayectorias parabólicas naturales
+
+</details>
+
+
 |Original|Modificado|
 |-----|-----|
-|<img width="400" src="https://github.com/user-attachments/assets/e868d5d8-5495-4295-91e9-561cf48002d6">|<img width="400" src="https://github.com/user-attachments/assets/0d5a3814-883d-4f54-a78d-1945d691ccea">|
+|<img width="400" src="https://github.com/user-attachments/assets/89bd2838-e372-46b7-961d-88fe33b9aaac">|<img width="400" src="https://github.com/user-attachments/assets/0b959b23-1765-4153-a4db-4e91b777f0ac">|
+
+
+
+
+
 
 <details>
   <summary> a Particle System with Forces Modificado</summary>
