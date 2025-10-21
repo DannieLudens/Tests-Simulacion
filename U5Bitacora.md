@@ -1229,22 +1229,405 @@ El emisor se mueve siguiendo la ecuación `x = centro + sin(t) × amplitud`, cre
 |<img width="400" src="https://github.com/user-attachments/assets/cff0c19e-f9d3-46f0-b2a2-8319d2f23668">|<img width="400" src="https://github.com/user-attachments/assets/b8a5814c-9e7e-41b2-8c8b-1c56f1dcd068">|
 
 
+<details>
+  <summary>Ejemplo 4.7 - Sistema con Repeledor (a Particle System with a Repeller)</summary>
 
+#### Ejemplo 4.7 - Sistema con Repeledor (a Particle System with a Repeller)
 
-
-
-
+---
 
 <details>
-  <summary> a Particle System with a Repeller Modificado</summary>
+  <summary>🔍 Gestión de memoria</summary>
 
-#### 5.  a Particle System with a Repeller Modificado
+Este ejemplo mantiene la misma gestión de memoria pero introduce un nuevo tipo de objeto: el **Repeller** (repeledor).
+
+**1. Estructura con Repeller:**
+```javascript
+let emitter;   // Sistema de partículas
+let repeller;  // Objeto que repele partículas
+```
+- El `Repeller` es un objeto **independiente** del sistema de partículas
+- No se almacena en ningún array (es único)
+- Se crea una sola vez en `setup()` y persiste
+
+**2. Aplicación de fuerzas en dos niveles:**
+
+**Nivel 1 - Gravedad (uniforme):**
+```javascript
+let gravity = createVector(0, 0.1);
+emitter.applyForce(gravity);  // Misma fuerza para todas
+```
+
+**Nivel 2 - Repulsión (específica):**
+```javascript
+emitter.applyRepeller(repeller);  // Fuerza diferente por partícula
+```
+
+**3. Método applyRepeller() en Emitter:**
+```javascript
+applyRepeller(repeller) {
+  for (let particle of this.particles) {
+    let force = repeller.repel(particle);  // Calcular fuerza única
+    particle.applyForce(force);            // Aplicar a esta partícula
+  }
+}
+```
+- Itera sobre cada partícula
+- Calcula una fuerza **específica** para cada una según su distancia al repeller
+- Aplica la fuerza individualmente
+
+**4. Diferencia con applyForce():**
+
+| `applyForce(force)` | `applyRepeller(repeller)` |
+|---------------------|---------------------------|
+| Recibe un vector | Recibe un objeto Repeller |
+| Aplica la misma fuerza a todas | Calcula fuerza diferente para cada una |
+| `force` es constante | `force` depende de la distancia |
+
+**5. Gestión de memoria - Sin cambios:**
+```javascript
+if (particle.isDead()) {
+  this.particles.splice(i, 1);
+}
+```
+- Las partículas se eliminan igual que en ejemplos anteriores
+- El `Repeller` NO se elimina (objeto permanente)
+
+**6. Diagrama de arquitectura:**
+```
+┌─────────────┐
+│   draw()    │ 
+└──────┬──────┘
+       ├→ Gravedad uniforme → emitter.applyForce(gravity)
+       └→ Repulsión variable → emitter.applyRepeller(repeller)
+                                       ↓
+                               for (cada partícula) {
+                                 force = repeller.repel(partícula)
+                                 partícula.applyForce(force)
+                               }
+```
+
+**Observación importante:**
+El `Repeller` NO gestiona partículas, solo **calcula fuerzas** cuando se le pide. Es el `Emitter` quien se encarga de pedirle al repeller que calcule la fuerza para cada partícula y luego aplicarla.
+
+</details>
+
+---
+
+<details>
+  <summary>🧪 Concepto aplicado: Repeller Oscilante (Unidad 4)</summary>
+
+**Experimento: Repeller con movimiento armónico simple horizontal**
+
+**¿Por qué elegí este concepto?**
+
+En el ejemplo original, el repeller está **estático** en una posición fija. Quería que el repeller se moviera horizontalmente con un **movimiento oscilatorio**, creando un "escudo móvil" que empuja las partículas de manera dinámica, generando patrones visuales más complejos e interesantes.
+
+**¿Cómo lo implementé?**
+
+El repeller usa la misma técnica de movimiento armónico simple que usamos en el Ejemplo 4.6, pero aplicada a un objeto que repele en lugar de emitir.
+
+**Implementación paso a paso:**
+
+**Paso 1: Agregar propiedades al Repeller**
+```javascript
+constructor(x, y) {
+  this.origin = createVector(x, y);    // Posición central fija
+  this.position = createVector(x, y);  // Posición actual (oscilante)
+  this.power = 150;                    // Fuerza de repulsión
+  
+  // 🆕 Propiedades para oscilación
+  this.angle = 0;          // Ángulo actual
+  this.angleVel = 0.03;    // Velocidad angular (más lento que el emisor)
+  this.amplitude = 80;     // Amplitud de oscilación
+}
+```
+
+**Paso 2: Método update() para movimiento**
+```javascript
+update() {
+  // Calcular nueva posición X usando seno
+  let x = this.origin.x + sin(this.angle) * this.amplitude;
+  this.position.x = x;
+  
+  // Incrementar ángulo
+  this.angle += this.angleVel;
+}
+```
+
+**Paso 3: Llamar update() en draw()**
+```javascript
+function draw() {
+  // ...
+  repeller.update();  // 🆕 Actualizar posición del repeller
+  emitter.applyRepeller(repeller);
+  // ...
+}
+```
+
+**Fórmula de repulsión:**
+
+La fuerza de repulsión sigue la ley de gravitación inversa al cuadrado:
+```
+F = -G / d²
+
+Donde:
+- G = power (150)
+- d = distancia entre repeller y partícula
+- El signo negativo hace que REPELE (empuja hacia afuera)
+```
+
+**Cálculo paso a paso en repel():**
+```javascript
+// 1. Vector del repeller a la partícula
+let force = p5.Vector.sub(this.position, particle.position);
+// Si partícula está a la derecha → force apunta a la derecha
+// Si partícula está a la izquierda → force apunta a la izquierda
+
+// 2. Distancia
+let distance = force.mag();
+distance = constrain(distance, 5, 50);  // Evitar fuerzas infinitas
+
+// 3. Magnitud de la fuerza (negativa = repele)
+let strength = -1 * this.power / (distance * distance);
+
+// 4. Aplicar magnitud al vector de dirección
+force.setMag(strength);
+```
+
+**Parámetros que probé:**
+
+| Parámetro | Valor | Efecto visual |
+|-----------|-------|---------------|
+| `power = 100` | Bajo | Repulsión débil, partículas pasan cerca |
+| `power = 150` | Moderado | Repulsión equilibrada ✅ |
+| `power = 300` | Alto | Repulsión fuerte, partículas desviadas bruscamente |
+| `angleVel = 0.02` | Muy lento | Movimiento casi imperceptible |
+| `angleVel = 0.03` | Lento | Movimiento suave y visible ✅ |
+| `angleVel = 0.05` | Moderado | Movimiento más rápido |
+| `amplitude = 50` | Pequeña | Oscilación sutil |
+| `amplitude = 80` | Moderada | Oscilación visible ✅ |
+| `amplitude = 150` | Grande | Oscilación muy amplia |
+
+**Resultado final:**
+
+Las partículas caen por gravedad pero son **desviadas** por el repeller oscilante. El efecto es como si hubiera un "escudo invisible" moviéndose de lado a lado, donde las partículas son empujadas hacia los lados cuando el repeller pasa cerca.
+
+**Concepto físico similar:**
+- Carga eléctrica negativa repeliendo electrones
+- Campo magnético repeliendo imanes del mismo polo
+- Escudo de fuerza en ciencia ficción
+
+</details>
+
+---
+
+<details>
+  <summary>💻 Código completo</summary>
+
+```javascript
+let emitter;
+let repeller;
+
+function setup() {
+  createCanvas(640, 240);
+  emitter = new Emitter(width / 2, 20);
+  repeller = new Repeller(width / 2, 150);
+}
+
+function draw() {
+  background(255);
+  
+  emitter.addParticle();
+  
+  // Aplicar gravedad (fuerza uniforme)
+  let gravity = createVector(0, 0.1);
+  emitter.applyForce(gravity);
+  
+  // 🆕 Actualizar posición del repeller (oscilación)
+  repeller.update();
+  
+  // Aplicar repulsión (fuerza específica por partícula)
+  emitter.applyRepeller(repeller);
+  
+  emitter.run();
+  repeller.show();
+  
+  // Info
+  fill(0);
+  noStroke();
+  text(`Partículas: ${emitter.particles.length}`, 10, 20);
+}
+
+// ========================================
+// CLASE EMITTER
+// ========================================
+class Emitter {
+  constructor(x, y) {
+    this.origin = createVector(x, y);
+    this.particles = [];
+  }
+  
+  addParticle() {
+    this.particles.push(new Particle(this.origin.x, this.origin.y));
+  }
+  
+  applyForce(force) {
+    for (let particle of this.particles) {
+      particle.applyForce(force);
+    }
+  }
+  
+  // Aplicar repulsión desde el repeller
+  applyRepeller(repeller) {
+    for (let particle of this.particles) {
+      let force = repeller.repel(particle);
+      particle.applyForce(force);
+    }
+  }
+  
+  run() {
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      let particle = this.particles[i];
+      particle.run();
+      
+      if (particle.isDead()) {
+        this.particles.splice(i, 1);
+      }
+    }
+  }
+}
+
+// ========================================
+// CLASE REPELLER CON OSCILACIÓN
+// ========================================
+class Repeller {
+  constructor(x, y) {
+    this.origin = createVector(x, y);    // Posición central fija
+    this.position = createVector(x, y);  // Posición actual (oscilante)
+    this.power = 150;                    // Fuerza de repulsión
+    
+    // 🆕 Propiedades para oscilación
+    this.angle = 0;          // Ángulo actual
+    this.angleVel = 0.03;    // Velocidad angular (más lento que emisor)
+    this.amplitude = 80;     // Amplitud de oscilación
+  }
+  
+  // 🆕 Actualizar posición con movimiento armónico simple
+  update() {
+    // Calcular nueva posición X usando seno
+    let x = this.origin.x + sin(this.angle) * this.amplitude;
+    this.position.x = x;
+    
+    // Incrementar ángulo para movimiento continuo
+    this.angle += this.angleVel;
+  }
+  
+  show() {
+    push();
+    stroke(0);
+    strokeWeight(2);
+    fill(255, 0, 0, 100);  // Rojo semi-transparente
+    circle(this.position.x, this.position.y, 32);
+    
+    // Línea para mostrar el rango de oscilación
+    stroke(255, 0, 0, 50);
+    line(this.origin.x - this.amplitude, this.position.y,
+         this.origin.x + this.amplitude, this.position.y);
+    pop();
+  }
+  
+  // Calcular fuerza de repulsión para UNA partícula específica
+  repel(particle) {
+    // 1. Vector de repeller hacia partícula
+    let force = p5.Vector.sub(this.position, particle.position);
+    
+    // 2. Obtener y limitar distancia
+    let distance = force.mag();
+    distance = constrain(distance, 5, 50);
+    
+    // 3. Calcular magnitud (inverso al cuadrado de la distancia)
+    // Negativo = repele (empuja hacia afuera)
+    let strength = -1 * this.power / (distance * distance);
+    
+    // 4. Establecer magnitud al vector de fuerza
+    force.setMag(strength);
+    
+    return force;
+  }
+}
+
+// ========================================
+// CLASE PARTICLE
+// ========================================
+class Particle {
+  constructor(x, y) {
+    this.position = createVector(x, y);
+    this.velocity = createVector(random(-1, 1), random(-2, 0));
+    this.acceleration = createVector(0, 0);
+    this.lifespan = 255;
+    this.mass = 1;
+  }
+  
+  run() {
+    this.update();
+    this.show();
+  }
+  
+  applyForce(force) {
+    let f = force.copy();
+    f.div(this.mass);
+    this.acceleration.add(f);
+  }
+  
+  update() {
+    this.velocity.add(this.acceleration);
+    this.position.add(this.velocity);
+    this.acceleration.mult(0);
+    this.lifespan -= 2;
+  }
+  
+  show() {
+    stroke(0, this.lifespan);
+    strokeWeight(2);
+    fill(100, 200, 100, this.lifespan);  // Verde
+    circle(this.position.x, this.position.y, 12);
+  }
+  
+  isDead() {
+    return this.lifespan < 0;
+  }
+}
+```
+
+**🔗 Enlace p5.js:** [Ver en vivo](https://editor.p5js.org/DanieLudens/sketches/U9ZVqJ2IT)
+
+</details>
+
+---
+
+📸 **Resultados visuales**
+
+**visuales:**
+- ✅ **Repeller visible**: Círculo rojo oscilante que repele partículas
+- ✅ **Línea de referencia**: Muestra el rango de oscilación del repeller
+- ✅ **Patrones de flujo**: Las partículas son desviadas creando formas ondulantes
+- ✅ **Efecto de escudo móvil**: Como un campo de fuerza que se mueve horizontalmente
+- ✅ **Interacción dinámica**: Gravedad + repulsión = trayectorias complejas
+
+**Diferencias clave:**
+- **Repeller estático:** Partículas desviadas en patrón de V fijo
+- **Repeller oscilante:** Patrones de flujo cambiantes, las partículas son empujadas en diferentes direcciones según la posición del repeller
 
 </details>
 
 |Original|Modificado|
 |-----|-----|
-|<img width="400" src="https://github.com/user-attachments/assets/e868d5d8-5495-4295-91e9-561cf48002d6">|<img width="400" src="https://github.com/user-attachments/assets/0d5a3814-883d-4f54-a78d-1945d691ccea">|
+|<img width="400" src="https://github.com/user-attachments/assets/0e2b0464-86a7-42a9-925b-73779f208c91">|<img width="400" src="https://github.com/user-attachments/assets/2432db44-7275-4900-a8c3-5dbed59cd56a">|
+
+
+
+
 
 --- 
 
