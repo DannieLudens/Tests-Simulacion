@@ -159,7 +159,7 @@ this.yoff += 0.01;  // Avance suave en Y
 ---
 
 <details>
-  <summary>💻 Código fuente completo</summary>
+  <summary>💻 Código completo</summary>
 
 ```javascript
 let particles = [];
@@ -332,7 +332,7 @@ emitters[] (Array de Emisores)
 <details>
   <summary>🧪 Concepto aplicado: Normalización de Vectores (Unidad 2)</summary>
 
-#### Experimento: Control de dirección con vectores normalizados
+**Experimento: Control de dirección con vectores normalizados**
 
 **¿Por qué elegí este concepto?**
 
@@ -399,7 +399,7 @@ Esto es útil porque:
 ---
 
 <details>
-  <summary>💻 Código fuente completo</summary>
+  <summary>💻 Código completo</summary>
 
 ```javascript
 let emitters = [];
@@ -676,7 +676,7 @@ La versión con `v²` produce una desaceleración más dramática a altas veloci
 ---
 
 <details>
-  <summary>💻 Código fuente completo</summary>
+  <summary>💻 Código completo</summary>
 
 ```javascript
 let emitter;
@@ -834,15 +834,406 @@ class Confetti extends Particle {
 
 
 <details>
-  <summary> a Particle System with Forces Modificado</summary>
+  <summary>Ejemplo 4.6 - Sistema con Fuerzas (a Particle System with Forces)</summary>
 
-#### 4.  a Particle System with Forces Modificado
+### Ejemplo 4.6 - Sistema con Fuerzas (a Particle System with Forces)
+
+---
+
+<details>
+  <summary>🔍 Gestión de memoria</summary>
+
+Este ejemplo mantiene la misma gestión de memoria que ejemplos anteriores, pero introduce una **arquitectura diferente para aplicar fuerzas**. Sin embargo la getion de fuerzas no afecta la gestion de memoria en este ejemplo.
+
+**1. Estructura de fuerzas:**
+```javascript
+function draw() {
+  let gravity = createVector(0, 0.1);
+  emitter.applyForce(gravity);  // Fuerza aplicada DESDE draw()
+}
+```
+- Las fuerzas se crean en `draw()` (nivel más alto)
+- Se envían al `Emitter` mediante `applyForce()`
+- El `Emitter` las distribuye a todas las partículas
+
+**2. Flujo de la fuerza (cascada):**
+```
+draw()
+  ↓ crea fuerza
+emitter.applyForce(force)
+  ↓ recibe y distribuye
+  for (cada partícula) {
+    particle.applyForce(force)
+  }
+```
+
+**3. Método applyForce() en Emitter:**
+```javascript
+applyForce(force) {
+  for (let particle of this.particles) {
+    particle.applyForce(force);  // Aplica a cada una
+  }
+}
+```
+- Itera sobre TODAS las partículas
+- Aplica la misma fuerza a cada una
+- Usa `for...of` porque no elimina elementos
+
+**4. Método applyForce() en Particle:**
+```javascript
+applyForce(force) {
+  let f = force.copy();    // Copiar para no modificar el original
+  f.div(this.mass);        // a = F/m
+  this.acceleration.add(f);
+}
+```
+- Copia la fuerza (importante: no modificar el vector original)
+- Divide por masa (Segunda Ley de Newton: F = ma)
+- Suma a la aceleración acumulada
+
+**5. Observación importante - Masa:**
+En este ejemplo se agrega la propiedad `mass`:
+```javascript
+this.mass = 1;
+```
+- Permite que diferentes partículas reaccionen diferente a la misma fuerza
+- Si `mass = 2`, la aceleración es la mitad
+- Si `mass = 0.5`, la aceleración es el doble
+
+**6. Gestión de memoria - Sin cambios:**
+```javascript
+if (particle.isDead()) {
+  this.particles.splice(i, 1);
+}
+```
+- Las partículas se eliminan igual que antes
+- La gestión de fuerzas NO afecta la gestión de memoria
+
+**Diagrama de arquitectura:**
+```
+┌─────────────┐
+│   draw()    │ Crea fuerzas (gravedad, viento, etc.)
+└──────┬──────┘
+       ↓ emitter.applyForce(force)
+┌─────────────┐
+│   Emitter   │ Distribuye fuerza a todas las partículas
+└──────┬──────┘
+       ↓ particle.applyForce(force) × N veces
+┌─────────────┐
+│  Particle   │ Aplica F/m a su aceleración
+└─────────────┘
+```
+
+</details>
+
+---
+
+<details>
+  <summary>🧪 Concepto aplicado: Movimiento Armónico Simple / Oscilador (Unidad 4)</summary>
+
+#### Experimento: Emisor oscilante con funciones trigonométricas
+
+**¿Por qué elegí este concepto?**
+
+En el ejemplo original, el emisor está **estático** en una posición fija. Quería que el emisor se moviera de lado a lado creando un **movimiento ondulatorio**, como un péndulo o una onda, para que las partículas se emitieran desde posiciones variables creando patrones visuales más interesantes.
+
+**¿Cómo lo implementé?**
+
+El movimiento armónico simple se basa en funciones trigonométricas (seno y coseno) que oscilan entre -1 y 1:
+
+**Fórmula del oscilador:**
+```
+x(t) = amplitud × sin(ángulo)
+ángulo = velocidadAngular × tiempo
+```
+
+**Implementación paso a paso:**
+
+**Paso 1: Agregar propiedades al Emitter**
+```javascript
+constructor(x, y) {
+  this.origin = createVector(x, y);
+  this.particles = [];
+  
+  // 🆕 Propiedades para oscilación
+  this.angle = 0;              // Ángulo actual
+  this.angleVel = 0.05;        // Velocidad angular
+  this.amplitude = 100;        // Amplitud de oscilación
+}
+```
+
+**Paso 2: Actualizar posición con seno**
+```javascript
+update() {
+  // Calcular nueva posición X usando seno
+  let x = this.origin.x + sin(this.angle) * this.amplitude;
+  
+  // Actualizar posición actual del emisor
+  this.position = createVector(x, this.origin.y);
+  
+  // Incrementar ángulo (movimiento continuo)
+  this.angle += this.angleVel;
+}
+```
+
+**Paso 3: Emitir partículas desde la nueva posición**
+```javascript
+addParticle() {
+  // Usar this.position en lugar de this.origin
+  this.particles.push(new Particle(this.position.x, this.position.y));
+}
+```
+
+**Conceptos matemáticos:**
+
+**Función seno:**
+```
+sin(0) = 0
+sin(π/2) = 1
+sin(π) = 0
+sin(3π/2) = -1
+sin(2π) = 0  (ciclo completo)
+```
+
+**Movimiento resultante:**
+```
+Tiempo: 0  → x = centro + sin(0) × 100 = centro
+Tiempo: 1  → x = centro + sin(0.05) × 100 = centro + 5
+Tiempo: 2  → x = centro + sin(0.10) × 100 = centro + 10
+...
+```
+
+**Parámetros que probé:**
+
+| Parámetro | Valor | Efecto visual |
+|-----------|-------|---------------|
+| `amplitude = 50` | Bajo | Oscilación sutil, movimiento contenido |
+| `amplitude = 100` | Moderado | Oscilación visible y equilibrada ✅ |
+| `amplitude = 200` | Alto | Oscilación muy amplia, casi llega a los bordes |
+| `angleVel = 0.02` | Lento | Movimiento suave y lento |
+| `angleVel = 0.05` | Moderado | Velocidad natural y visible ✅ |
+| `angleVel = 0.1` | Rápido | Oscilación muy rápida, casi frenética |
+
+**¿Por qué funciona?**
+
+1. **`sin(angle)`** oscila naturalmente entre -1 y 1
+2. **Multiplicar por amplitud** escala el rango: `[-amplitude, +amplitude]`
+3. **Sumar a origin.x** centra la oscilación: `[origin.x - amplitude, origin.x + amplitude]`
+4. **Incrementar angle** crea movimiento continuo
+
+**Comparación visual:**
+
+| Sin oscilación | Con oscilación (amplitude = 100) |
+|----------------|----------------------------------|
+| Emisor estático en el centro | Emisor se mueve de lado a lado |
+| Partículas caen en línea recta | Partículas crean patrón ondulado |
+| Monótono | Dinámico y visualmente interesante |
+
+**Variaciones que experimenté:**
+
+**1. Oscilación vertical:**
+```javascript
+let y = this.origin.y + sin(this.angle) * this.amplitude;
+this.position = createVector(this.origin.x, y);
+```
+Resultado: Emisor sube y baja
+
+**2. Oscilación en ambos ejes (Lissajous):**
+```javascript
+let x = this.origin.x + sin(this.angle) * this.amplitude;
+let y = this.origin.y + cos(this.angle * 1.5) * this.amplitude;
+this.position = createVector(x, y);
+```
+Resultado: Patrón de figura 8 o elipse
+
+**3. Amplitud variable:**
+```javascript
+this.amplitude = 50 + sin(this.angle * 0.5) * 50;
+```
+Resultado: La amplitud de oscilación también oscila (meta-oscilación)
+
+**Resultado final:**
+
+Las partículas ahora se emiten desde un emisor que se mueve sinusoidalmente, creando un **patrón de cortina ondulante** o "fuente danzante". El movimiento armónico simple genera un efecto agradable a la vista.
+
+**Concepto físico:**
+
+Este es el mismo principio que gobierna:
+- Péndulos
+- Muelles/resortes
+- Ondas de agua
+- Movimiento circular proyectado en un eje
+
+</details>
+
+---
+
+<details>
+  <summary>💻 Código completo</summary>
+
+```javascript
+let emitter;
+
+function setup() {
+  createCanvas(640, 240);
+  emitter = new Emitter(width / 2, 50);
+}
+
+function draw() {
+  background(255);
+  
+  // Aplicar gravedad a todas las partículas
+  let gravity = createVector(0, 0.1);
+  emitter.applyForce(gravity);
+  
+  // 🆕 Actualizar posición del emisor (oscilación)
+  emitter.update();
+  
+  emitter.addParticle();
+  emitter.run();
+  emitter.show();  // 🆕 Mostrar el emisor
+  
+  // Info
+  fill(0);
+  noStroke();
+  text(`Partículas: ${emitter.particles.length}`, 10, 20);
+}
+
+// ========================================
+// CLASE EMITTER CON OSCILACIÓN
+// ========================================
+class Emitter {
+  constructor(x, y) {
+    this.origin = createVector(x, y);  // Posición central
+    this.position = createVector(x, y); // Posición actual
+    this.particles = [];
+    
+    // 🆕 Propiedades para oscilación
+    this.angle = 0;              // Ángulo actual
+    this.angleVel = 0.05;        // Velocidad angular
+    this.amplitude = 100;        // Amplitud de oscilación
+  }
+  
+  // 🆕 Actualizar posición con movimiento armónico
+  update() {
+    // Calcular nueva posición X usando seno
+    let x = this.origin.x + sin(this.angle) * this.amplitude;
+    this.position.x = x;
+    
+    // Incrementar ángulo para movimiento continuo
+    this.angle += this.angleVel;
+  }
+  
+  addParticle() {
+    // Emitir desde la posición actual (oscilante)
+    this.particles.push(new Particle(this.position.x, this.position.y));
+  }
+  
+  applyForce(force) {
+    for (let particle of this.particles) {
+      particle.applyForce(force);
+    }
+  }
+  
+  run() {
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      let particle = this.particles[i];
+      particle.run();
+      
+      if (particle.isDead()) {
+        this.particles.splice(i, 1);
+      }
+    }
+  }
+  
+  // 🆕 Mostrar el emisor
+  show() {
+    push();
+    stroke(0);
+    strokeWeight(2);
+    fill(200, 0, 200, 150);
+    circle(this.position.x, this.position.y, 20);
+    pop();
+  }
+}
+
+// ========================================
+// CLASE PARTICLE CON MASA
+// ========================================
+class Particle {
+  constructor(x, y) {
+    this.position = createVector(x, y);
+    this.velocity = createVector(random(-1, 1), random(-2, 0));
+    this.acceleration = createVector(0, 0);
+    this.lifespan = 255;
+    this.mass = 1;  // Masa para F = ma
+  }
+  
+  run() {
+    this.update();
+    this.show();
+  }
+  
+  applyForce(force) {
+    let f = force.copy();    // Copiar para no modificar original
+    f.div(this.mass);        // a = F/m
+    this.acceleration.add(f);
+  }
+  
+  update() {
+    this.velocity.add(this.acceleration);
+    this.position.add(this.velocity);
+    this.acceleration.mult(0);  // Resetear aceleración
+    this.lifespan -= 2;
+  }
+  
+  show() {
+    stroke(0, this.lifespan);
+    strokeWeight(2);
+    fill(100, 150, 255, this.lifespan);
+    circle(this.position.x, this.position.y, 12);
+  }
+  
+  isDead() {
+    return this.lifespan < 0;
+  }
+}
+```
+
+**🔗 Enlace p5.js:** [Ver en vivo](https://editor.p5js.org/DanieLudens/sketches/XLn26vldA)
+
+</details>
+
+---
+
+📸 **Resultados visuales**
+
+**visuales:**
+- ✅ **Emisor visible**: Círculo morado oscilante que muestra la fuente de partículas
+- ✅ **Patrón ondulado**: Las partículas crean una "cortina" con forma de onda
+- ✅ **Movimiento hipnótico**: El oscilador crea un efecto naturalmente agradable
+- ✅ **Combinación de fuerzas**: Oscilación horizontal + gravedad vertical = trayectorias parabólicas
+- ✅ **Efecto de fuente danzante**: Similar a fuentes ornamentales con movimiento
+
+**Diferencias clave:**
+- **Sin oscilación:** Partículas caen desde un punto fijo, patrón predecible
+- **Con oscilación:** Partículas caen desde posiciones variables, creando patrón ondulante dinámico
+
+**movimiento:**
+El emisor se mueve siguiendo la ecuación `x = centro + sin(t) × amplitud`, creando un movimiento armónico simple. Las partículas heredan la posición X del emisor en el momento de su creación, y luego caen por gravedad, resultando en un patrón visual que parece una onda congelada en el tiempo.
 
 </details>
 
 |Original|Modificado|
 |-----|-----|
-|<img width="400" src="https://github.com/user-attachments/assets/e868d5d8-5495-4295-91e9-561cf48002d6">|<img width="400" src="https://github.com/user-attachments/assets/0d5a3814-883d-4f54-a78d-1945d691ccea">|
+|<img width="400" src="https://github.com/user-attachments/assets/cff0c19e-f9d3-46f0-b2a2-8319d2f23668">|<img width="400" src="https://github.com/user-attachments/assets/b8a5814c-9e7e-41b2-8c8b-1c56f1dcd068">|
+
+
+
+
+
+
+
 
 <details>
   <summary> a Particle System with a Repeller Modificado</summary>
