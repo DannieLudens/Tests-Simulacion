@@ -58,9 +58,9 @@ Además te pediré que hagas los siguientes experimentos y los reportes en tu bi
 ---
 
 <details>
-  <summary>Ejemplo 4.2 - Array de Partículas (an Array of Particles)</summary>
+  <summary>Ejemplo 4.2 - Arreglo de Partículas </summary>
 
-#### Ejemplo 4.2 - Array de Partículas (an Array of Particles)
+#### Ejemplo 4.2 - an Array of Particles
 
 ---
 
@@ -260,9 +260,9 @@ class Particle {
 
 
 <details>
-  <summary>Ejemplo 4.4 - Sistema de Sistemas (a System of Systems)</summary>
+  <summary>Ejemplo 4.4 - Sistema de Sistemas </summary>
 
-#### Ejemplo 4.4 - Sistema de Sistemas (a System of Systems)
+#### Ejemplo 4.4 - a System of Systems
 
 ---
 
@@ -523,9 +523,9 @@ class Particle {
 
 
 <details>
-  <summary>Ejemplo 4.5 - Herencia y Polimorfismo (a Particle System with Inheritance and Polymorphism)</summary>
+  <summary>Ejemplo 4.5 - Herencia y Polimorfismo </summary>
 
-#### Ejemplo 4.5 - Herencia y Polimorfismo (a Particle System with Inheritance and Polymorphism)
+#### Ejemplo 4.5 - a Particle System with Inheritance and Polymorphism
 
 ---
 
@@ -834,9 +834,9 @@ class Confetti extends Particle {
 
 
 <details>
-  <summary>Ejemplo 4.6 - Sistema con Fuerzas (a Particle System with Forces)</summary>
+  <summary>Ejemplo 4.6 - Sistema con Fuerzas </summary>
 
-### Ejemplo 4.6 - Sistema con Fuerzas (a Particle System with Forces)
+#### Ejemplo 4.6 - a Particle System with Forces
 
 ---
 
@@ -931,7 +931,7 @@ if (particle.isDead()) {
 <details>
   <summary>🧪 Concepto aplicado: Movimiento Armónico Simple / Oscilador (Unidad 4)</summary>
 
-#### Experimento: Emisor oscilante con funciones trigonométricas
+**Experimento: Emisor oscilante con funciones trigonométricas**
 
 **¿Por qué elegí este concepto?**
 
