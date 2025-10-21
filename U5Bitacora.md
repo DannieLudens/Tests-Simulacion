@@ -1230,9 +1230,9 @@ El emisor se mueve siguiendo la ecuación `x = centro + sin(t) × amplitud`, cre
 
 
 <details>
-  <summary>Ejemplo 4.7 - Sistema con Repeledor (a Particle System with a Repeller)</summary>
+  <summary>Ejemplo 4.7 - Sistema con Repeledor</summary>
 
-#### Ejemplo 4.7 - Sistema con Repeledor (a Particle System with a Repeller)
+#### Ejemplo 4.7 - a Particle System with a Repeller
 
 ---
 
