@@ -34,7 +34,7 @@ En esta fase, repasarás los conceptos de herencia y polimorfismo que aplicarás
 
 ### Actividad 02
 
-#### Revisa y repasa algunos conceptos
+**Revisa y repasa algunos conceptos**
 
 Dale una mirada al [capítulo sobre sistemas de partículas](https://natureofcode.com/particles/) del texto guía del curso. Explora libremente, pero te pediré que revises especialmente los siguientes conceptos:
 
@@ -60,7 +60,7 @@ Además te pediré que hagas los siguientes experimentos y los reportes en tu bi
 <details>
   <summary>Ejemplo 4.2 - Array de Partículas (an Array of Particles)</summary>
 
-### Ejemplo 4.2 - Array de Partículas (an Array of Particles)
+#### Ejemplo 4.2 - Array de Partículas (an Array of Particles)
 
 ---
 
@@ -117,7 +117,7 @@ El `lifespan` disminuye 2 unidades por frame (`lifespan -= 2`), lo que significa
 <details>
   <summary>🧪 Concepto aplicado: Ruido Perlin (Unidad 1)</summary>
 
-#### Experimento: Ruido Perlin para movimiento orgánico
+**Ruido Perlin para movimiento orgánico**
 
 **¿Por qué elegí este concepto?**
 
@@ -238,7 +238,7 @@ class Particle {
 
 ---
 
-#### 📸 Resultados visuales
+📸 **Resultados visuales**
 
 **Observaciones visuales:**
 - ✅ El efecto de rastro (`background(255, 25)`) crea líneas suaves que revelan las trayectorias
