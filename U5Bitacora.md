@@ -1641,33 +1641,60 @@ Documenta el proceso de creación, incluyendo la idea inicial, bocetos, experime
 
 1. Es unidad incluye una novedad: DISEÑO. Debes intencionar tu obra. Esta vez te pediré que DISEÑES antes de generar código. Define un concepto, haz bocetos, define la interacción, etc. ¿Cuál es el concepto de tu obra? ¿Qué quieres comunicar con ella?
 
-
-
 2. Debes utilizar los conceptos de herencia y polimorfismo que revisaste en la fase de investigación.
-
-
 
 3. Debes utilizar al menos un concepto de cada una de las unidades anteriores: 4 conceptos.
 
-
-
 4. Debes definir cómo vas a gestionar el tiempo de vida de las partículas y la memoria.
 
-
-
-5. La obra debe ser interactiva en tiempo real. Puedes usar teclado, mouse, música, el micrófono, video, sensor o cualquier otro dispositivo de entrada.
-
-
+5. La obra debe ser interactiva en tiempo real. Puedes usar teclado, mouse, música, el micrófono, video, sensor o cualquier otro dispositivo de entrada. 
 
 6. Incluye un enlace a tu código en el editor de p5.js.
 
-
-
 7. Incluye el código fuente.
 
-
-
 8. Captura de pantallas de tu obra con las imágenes que más te gusten
+
+## Corrientes de flujo musical - Arte generativo reactivo al audio
+
+<img width="500" src="https://github.com/user-attachments/assets/5e8666dc-4430-4c59-827f-5ee14e569b42">
+
+Una visualización del sonido ó la música donde no solo se escucha, sino que se ve como va tomando rumbo y forma.. Cada frecuencia de audio (graves, medios, agudos) tiene su propia "voz visual" en forma de partículas que fluyen, danzan y reaccionan al ritmo de la música Donde el sonido se convierte en movimiento y color.
+
+**Inspiración:**
+
+- El concepto de "ver la música" - sinestesia
+
+- Flow fields naturales como ver las corrientes de agua o de viento
+
+- [Waves - Jerome](https://openprocessing.org/sketch/2442420) - Open Processing
+
+<img width="300" src="https://github.com/user-attachments/assets/42d0f356-62dc-4893-a7fa-9bc8a0d767dd">
+
+
+**Metáfora:**
+
+ Los graves son como olas pesadas que mueven partículas grandes y lentas. Los medios son como corrientes que mantienen el flujo. Los agudos son como ráfagas de viento que impulsan partículas pequeñas y rápidas.
+
+**Interacción:**
+
+**Entrada Principal: Audio**
+- Análisis en tiempo real de frecuencias (Bass, Mid, Treble)
+- Análisis de amplitud general
+
+**Controles del Usuario:**
+
+| Tecla | Acción | Propósito |
+|-------|--------|-----------|
+| **SPACE** | Reset partículas | Reiniciar sin detener música |
+| **P** | Play/Pause | Controlar reproducción |
+| **B** | Toggle B/N | Modo blanco y negro para captura limpia |
+| **C** | Limpiar | Borrar rastros acumulados |
+| **S** | Screenshot | Capturar momento único |
+| **R** | Reiniciar todo | Comenzar desde cero |
+| **U** | Toggle UI | Ocultar interfaz para contemplación |
+| **L** | Toggle Lifespan | Activar/desactivar muerte de partículas |
+
 
 
 ## Reflect: Consolidación y metacognición 🤔
