@@ -1657,26 +1657,167 @@ Documenta el proceso de creación, incluyendo la idea inicial, bocetos, experime
 
 ## Corrientes de flujo musical - Arte generativo reactivo al audio
 
-<img width="500" src="https://github.com/user-attachments/assets/5e8666dc-4430-4c59-827f-5ee14e569b42">
+
+### 📐 FASE 1: DISEÑO
+
+<details>
+<summary><strong>🎨 Concepto de la Obra</strong></summary>
+
+**Concepto:** Corrientes de flujo musical
+
+**¿Qué quiero comunicar?**
 
 Una visualización del sonido ó la música donde no solo se escucha, sino que se ve como va tomando rumbo y forma.. Cada frecuencia de audio (graves, medios, agudos) tiene su propia "voz visual" en forma de partículas que fluyen, danzan y reaccionan al ritmo de la música Donde el sonido se convierte en movimiento y color.
 
 **Inspiración:**
 
 - El concepto de "ver la música" - sinestesia
-
-- Flow fields naturales como ver las corrientes de agua o de viento
-
+- Flow fields naturales como corrientes de agua o viento
+- El trabajo de artistas como [Refik Anadol](https://refikanadol.com/) en arte generativo reactivo
 - [Waves - Jerome](https://openprocessing.org/sketch/2442420) - Open Processing
 
 <img width="300" src="https://github.com/user-attachments/assets/42d0f356-62dc-4893-a7fa-9bc8a0d767dd">
 
+**Metáfora visual:**
 
-**Metáfora:**
+Imagina miles de partículas flotando en un campo invisible Los graves son como olas pesadas que mueven partículas grandes y lentas. Los medios son como corrientes que mantienen el flujo. Los agudos son como ráfagas de viento que impulsan partículas pequeñas y rápidas.
 
- Los graves son como olas pesadas que mueven partículas grandes y lentas. Los medios son como corrientes que mantienen el flujo. Los agudos son como ráfagas de viento que impulsan partículas pequeñas y rápidas.
+</details>
 
-**Interacción:**
+---
+
+<details>
+<summary><strong>✏️ Diseños Conceptuales</strong></summary><br>
+
+**Diagrama de Flujo del Sistema:**
+
+Este diagrama muestra cómo el audio se transforma en visualización paso a paso.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    FLUJO COMPLETO DEL SISTEMA                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+PASO 1: ENTRADA DE AUDIO
+┌──────────────────┐
+│   🎵 AUDIO       │  ← Música (mp3, archivo cargado)
+│   (Música)       │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│ 📊 ANÁLISIS FFT  │  ← p5.FFT analiza frecuencias cada frame
+│  + AMPLITUDE     │
+└────────┬─────────┘
+         │
+         ├─────────────────────────────────────────┐
+         │                                         │
+         ▼                                         ▼
+    FRECUENCIAS                               VOLUMEN
+    ┌─────────┐                           ┌──────────┐
+    │ BASS    │ 0-255 (20-140 Hz)         │ LEVEL    │ 0-1
+    │ MID     │ 0-255 (140-2000 Hz)       │ (Amplitud│
+    │ TREBLE  │ 0-255 (2000-20000 Hz)     │  general)│
+    └────┬────┘                           └─────┬────┘
+         │                                      │
+         └──────────────┬───────────────────────┘
+                        │
+PASO 2: MAPEO A PARÁMETROS DEL FLOW FIELD
+                        │
+                        ▼
+         ┌──────────────────────────┐
+         │  PARÁMETROS MAPEADOS:    │
+         │  • bass   → a1 (0.5-5)   │  ← Dirección horizontal
+         │  • mid    → a2 (0.5-5)   │  ← Intensidad del campo
+         │  • treble → a3 (0.5-5)   │  ← Rotaciones/remolinos
+         │  • level  → a4 (0.5-3)   │  ← Variación del noise
+         │  • level  → a5 (5-15)    │  ← Velocidad global
+         └──────────────┬───────────┘
+                        │
+PASO 3: CÁLCULO DEL FLOW FIELD (en Mobile.update())
+                        │
+                        ▼
+         ┌──────────────────────────┐
+         │   FLOW FIELD (Común)     │
+         │                          │
+         │ velocity = createVector( │
+         │   noise(a4 + a2*sin(...)),│  ← Usa a1, a2, a3, a4
+         │   noise(a2 + a3*cos(...)) │     del audio
+         │ )                        │
+         │                          │
+         │ velocity.mult(a5)        │  ← a5 controla velocidad
+         │ velocity.rotate(...)     │  ← a3 controla rotación
+         └──────────────┬───────────┘
+                        │
+                        │ HERENCIA: Todas las partículas heredan
+                        │ este cálculo de flow field de Mobile
+                        │
+         ┌──────────────┴──────────────┐
+         │                             │
+PASO 4: POLIMORFISMO - REACCIONES ESPECÍFICAS POR TIPO
+         │                             │
+    ┌────▼─────┐   ┌────▼─────┐   ┌───▼──────┐
+    │BassMobile│   │MidMobile │   │TrebleMob.│
+    │          │   │          │   │          │
+    │ 1000     │   │ 1000     │   │ 1000     │
+    │partículas│   │partículas│   │partículas│
+    └────┬─────┘   └────┬─────┘   └────┬─────┘
+         │              │              │
+         │              │              │
+    SI bass>200    SI mid>180    SI treble>160
+         │              │              │
+         ▼              ▼              ▼
+    • Más          • Cambian      • Se aceleran
+      VISIBLES       de COLOR        2.5x
+    • Más          • Verde →      • Partículas
+      GRUESAS        Cian           más rápidas
+    • Líneas       • Tono         • Energía
+      1.5→3px        dinámico       de agudos
+         │              │              │
+         └──────────────┴──────────────┘
+                        │
+PASO 5: RENDERIZADO VISUAL
+                        │
+                        ▼
+         ┌──────────────────────────┐
+         │   CANVAS (800x800)       │
+         │                          │
+         │  🔴 Rojas/Naranjas       │ ← BassMobile (gruesas, lentas)
+         │  🟢 Verdes/Azules        │ ← MidMobile (normales)
+         │  🟣 Magentas             │ ← TrebleMobile (finas, rápidas)
+         │                          │
+         │  3000 partículas total   │
+         │  Todas reaccionan al     │
+         │  mismo flow field pero   │
+         │  con comportamientos     │
+         │  diferenciados           │
+         └──────────────────────────┘
+```
+
+
+**Paleta de Colores:**
+
+```
+BASS (Graves):    Rojos/Naranjas  [HSB: 0-40]
+                  Barras: Naranja brillante [HSB: 20, 255, 255]
+                  
+MID (Medios):     Verdes/Azules   [HSB: 120-200]
+                  Barras: Verde brillante [HSB: 120, 255, 255]
+                  
+TREBLE (Agudos):  Magentas        [HSB: 280-360]
+                  Barras: Magenta brillante [HSB: 300, 255, 255]
+```
+
+Las barras de frecuencia usan exactamente los mismos rangos de color que las partículas que representan, creando coherencia visual entre el análisis y la visualización.
+
+
+
+</details>
+
+---
+
+<details>
+<summary><strong>🎮 Diseño de Interacción</strong></summary><br>
 
 **Entrada Principal: Audio**
 - Análisis en tiempo real de frecuencias (Bass, Mid, Treble)
@@ -1684,17 +1825,1476 @@ Una visualización del sonido ó la música donde no solo se escucha, sino que s
 
 **Controles del Usuario:**
 
-| Tecla | Acción | Propósito |
-|-------|--------|-----------|
+| Tecla/Control | Acción | Propósito |
+|---------------|--------|-----------|
+| **Botón** | Toggle UI | Mostrar/ocultar interfaz (funciona en móvil) |
 | **SPACE** | Reset partículas | Reiniciar sin detener música |
 | **P** | Play/Pause | Controlar reproducción |
-| **B** | Toggle B/N | Modo blanco y negro para captura limpia |
+| **B** | Toggle B/N | Modo blanco y negro  |
 | **C** | Limpiar | Borrar rastros acumulados |
 | **S** | Screenshot | Capturar momento único |
 | **R** | Reiniciar todo | Comenzar desde cero |
-| **U** | Toggle UI | Ocultar interfaz para contemplación |
+| **U** | Toggle UI | Ocultar interfaz para contemplación (también vía botón) |
 | **L** | Toggle Lifespan | Activar/desactivar muerte de partículas |
+| **Slider Volumen** | Control de volumen | Ajustar volumen del audio de 0% a 100% |
 
+**Selector de Archivo:**
+- Input file debajo del canvas
+- Permite cargar cualquier archivo de audio (mp3, wav, ogg)
+- Cambia inmediatamente la canción que esta sonando
+
+**Retroalimentación Visual:**
+
+1. **Botón Toggle UI (esquina superior izquierda):**
+   - Botón siempre visible
+   - Permite mostrar/ocultar UI con un clic
+   - Por defecto el UI está OCULTO para no abrumar al usuario
+   - Funcional en dispositivos móviles sin teclado
+
+2. **UI Informativo (visible al activar UI):**
+   - FPS
+   - Número de partículas activas
+   - Estado de reproducción
+   - Modo actual (Color/B&N)
+   - Estado de Lifespan (**ON por defecto**)
+   - Volumen actual
+   - Nombre de la canción
+
+3. **Barras de Frecuencia (esquina superior derecha):**
+   - Barra BASS (Naranja) - Muestra energía de graves
+   - Barra MID (Verde) - Muestra energía de medios
+   - Barra TREB (Magenta) - Muestra energía de agudos
+   - Valores numéricos debajo de cada barra
+
+4. **Controles Adicionales (debajo del canvas):**
+   - Selector de archivo de audio
+   - Slider de volumen (0-100%)
+
+5. **Instrucciones (parte inferior):**
+   - Todos los controles disponibles
+   - Siempre visible cuando UI está activo
+
+</details>
+
+---
+
+### 💻 FASE 2: IMPLEMENTACIÓN TÉCNICA
+
+<details>
+<summary><strong>🏗️ Herencia y Polimorfismo - Conceptos de POO Aplicados</strong></summary><br>
+
+Esta sección documenta cómo se aplicaron los conceptos de **Programación Orientada a Objetos (POO)** investigados en la fase de Seek, específicamente herencia y polimorfismo.
+
+
+**Diagrama de Arquitectura (Herencia y Polimorfismo):**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              ESTRUCTURA DE CLASES (POO)                     │
+└─────────────────────────────────────────────────────────────┘
+
+                    ┌─────────────────┐
+                    │     Mobile      │ ◄─── CLASE PADRE
+                    │  (Clase Padre)  │
+                    ├─────────────────┤
+                    │ • position      │
+                    │ • velocity      │
+                    │ • lifespan      │
+                    │ • mass = 1      │
+                    │ • speedMult = 1 │
+                    ├─────────────────┤
+                    │ + run()         │ ◄─── Heredado por todas
+                    │ + update()      │ ◄─── Lógica del flow field
+                    │ + display()     │
+                    │ + isDead()      │ ◄─── Heredado por todas
+                    └────────┬────────┘
+                             │
+                 ┌───────────┼───────────┐
+                 │           │           │
+                 │ extends   │ extends   │ extends
+                 │           │           │
+         ┌───────▼──┐  ┌─────▼────┐  ┌──▼────────┐
+         │BassMobile│  │MidMobile │  │TrebleMob. │ ◄─── CLASES HIJAS
+         ├──────────┤  ├──────────┤  ├───────────┤
+         │mass = 2  │  │mass = 1  │  │mass = 0.5 │ ◄─── SOBRESCRIBEN
+         │speed=0.7 │  │speed = 1 │  │speed=1.5  │      propiedades
+         │stroke=1.5│  │stroke=0.8│  │stroke=0.3 │
+         │ROJA      │  │VERDE     │  │MAGENTA    │
+         ├──────────┤  ├──────────┤  ├───────────┤
+         │update()  │  │update()  │  │update()   │ ◄─── SOBRESCRIBEN
+         │ +reacción│  │ +reacción│  │ +reacción │      comportamiento
+         │ a BASS   │  │ a MID    │  │ a TREBLE  │
+         └──────────┘  └──────────┘  └───────────┘
+              │              │              │
+              └──────────────┴──────────────┘
+                             │
+                    ARRAY POLIMÓRFICO
+                             │
+                             ▼
+    mobiles[] = [Bass, Bass, ..., Mid, Mid, ..., Treble, Treble, ...]
+                 │                                  │
+                1000 objetos                       1000 objetos
+                      33% + 33% + 34% = 100% (3000 total)
+```
+
+---
+
+#### **Los 4 Pilares de POO Implementados**
+
+**1. ENCAPSULACIÓN** 🔒
+
+Cada clase encapsula sus propios datos y métodos que operan sobre esos datos.
+
+Cuando definimoss propiedades dentro del constructor (`this.lifespan`, `this.mass`, etc.), cada objeto tiene su propia copia. Aunque técnicamente son accesibles desde fuera, la convención es que solo los métodos de la clase deberían modificarlas.
+
+```javascript
+class Mobile {
+  constructor(index) {
+    // Datos encapsulados (privados para cada instancia)
+    this.lifespan = 255;
+    this.mass = 1;
+    this.speedMult = 1;
+    this.position = createVector(random(width), random(height));
+  }
+
+  // Métodos que operan sobre datos encapsulados
+  isDead() {
+    return useLifespan && this.lifespan < 0;
+  }
+}
+```
+
+- ✅ Cada partícula mantiene su propio estado interno
+- ✅ No se puede acceder directamente a `lifespan` desde fuera
+- ✅ Solo se modifica a través de métodos como `update()`
+
+---
+
+**2. ABSTRACCIÓN** 🎭
+
+La clase `Mobile` abstrae el comportamiento común de todas las partículas, ocultando detalles de implementación.
+
+```javascript
+// Uso simple desde sketch.js (abstracción):
+mobiles[i].run(bass, mid, treble, level);
+
+// Internamente ejecuta lógica compleja (oculta):
+// - Cálculo de flow field con ruido Perlin
+// - Aplicación de fuerzas y velocidades
+// - Wrap-around en bordes
+// - Envejecimiento de partícula
+```
+
+- ✅ El usuario de la clase no necesita saber cómo funciona el flow field
+- ✅ Solo necesita llamar `run()` y la partícula se comporta correctamente
+
+---
+
+**3. HERENCIA** 🌳
+
+Tres clases hijas heredan de la clase padre `Mobile`.
+
+```javascript
+// CLASE PADRE
+class Mobile {
+  constructor(index) {
+    this.lifespan = 255;
+    this.mass = 1;           // ← Será sobrescrito
+    this.speedMult = 1;      // ← Será sobrescrito
+  }
+
+  run(bass, mid, treble, level) {  // ← HEREDADO sin cambios
+    this.update(bass, mid, treble, level);
+    this.display();
+  }
+
+  isDead() {  // ← HEREDADO sin cambios
+    return useLifespan && this.lifespan < 0;
+  }
+}
+
+// CLASE HIJA
+class BassMobile extends Mobile {  // ← HERENCIA
+  constructor(index) {
+    super(index);  // ← Llama al constructor padre
+
+    // SOBRESCRIBE propiedades para comportamiento específico
+    this.mass = 2;              // Más pesadas
+    this.speedMult = 0.7;       // Más lentas
+    this.lifespanDecay = random(0.3, 1);  // Viven más tiempo
+  }
+
+  // SOBRESCRIBE + EXTIENDE update()
+  update(bass, mid, treble, level) {
+    super.update(bass, mid, treble, level);  // ← Ejecuta lógica padre
+
+    // AGREGA comportamiento específico
+    if (bass > 200) {
+      this.trans += 5;
+      this.strokeWeightVal = map(bass, 200, 255, 1.5, 3);
+    }
+  }
+}
+```
+
+**¿Qué heredan las clases hijas?**
+- ✅ Propiedades: `position`, `velocity`, `lifespan`, `acceleration`
+- ✅ Métodos: `run()`, `isDead()`, lógica base de `update()`
+
+**¿Qué sobrescriben?**
+- ✅ Constructor: Valores específicos de `mass`, `speedMult`, `strokeWeightVal`
+- ✅ `update()`: Agregan reacciones específicas a frecuencias
+- ✅ `display()`: Colores y estilos específicos
+
+---
+
+**4. POLIMORFISMO** ⚡
+
+Un solo array contiene objetos de diferentes tipos que responden diferente al mismo método.
+
+```javascript
+// CREACIÓN DE ARRAY POLIMÓRFICO (sketch.js)
+let mobiles = [];
+
+// Agregar diferentes tipos al mismo array
+for (let i = 0; i < 1000; i++) {
+  mobiles.push(new BassMobile(i));    // Tipo 1
+}
+for (let i = 1000; i < 2000; i++) {
+  mobiles.push(new MidMobile(i));     // Tipo 2
+}
+for (let i = 2000; i < 3000; i++) {
+  mobiles.push(new TrebleMobile(i));  // Tipo 3
+}
+
+// Resultado: mobiles = [Bass, Bass, ..., Mid, Mid, ..., Treble, Treble, ...]
+```
+
+**Ejecución polimórfica:**
+```javascript
+// MISMO método, DIFERENTES comportamientos
+for (let i = 0; i < mobiles.length; i++) {
+  mobiles[i].run(bass, mid, treble, level);  // ← Cada tipo ejecuta SU versión
+  // BassMobile.run() → reacciona cuando bass > 200
+  // MidMobile.run() → reacciona cuando mid > 180
+  // TrebleMobile.run() → reacciona cuando treble > 160
+}
+
+// Mismo método isDead() funciona para TODOS los tipos
+if (mobiles[i].isDead()) {
+  mobiles.splice(i, 1);
+}
+```
+
+---
+
+#### **Tabla Comparativa: Investigación vs Implementación**
+
+Comparación entre el ejemplo investigado (Ejemplo 4.5 - Particle System) y la implementación actual:
+
+| Concepto | Fase Seek (Ejemplo 4.5) | Implementación (Flow Field Sónico) |
+|----------|-------------------------|-------------------------------------|
+| **Clase Padre** | `Particle` | `Mobile` |
+| **Clases Hijas** | `Confetti extends Particle` | `BassMobile extends Mobile`<br>`MidMobile extends Mobile`<br>`TrebleMobile extends Mobile` |
+| **Array Polimórfico** | `[Particle, Confetti, Particle, ...]` | `[BassMobile, MidMobile, TrebleMobile, ...]` |
+| **Métodos Heredados** | `isDead()`, `update()` | `run()`, `isDead()`, lógica base de `update()` |
+| **Métodos Sobrescritos** | `show()` (dibuja cuadrado vs círculo) | `update()` (reacciones a frecuencias)<br>`display()` (colores específicos) |
+| **Diferenciación** | Visual (forma) | Visual (color) + Comportamental (reacción a audio) |
+| **Proporción en Array** | 50% Particle / 50% Confetti | 33% Bass / 33% Mid / 34% Treble |
+
+---
+
+#### **Justificación: Ventajas de Usar Herencia**
+
+**❌ SIN HERENCIA (código duplicado):**
+
+Si no usáramos herencia, tendríamos que repetir todo el código del flow field en cada clase:
+
+- `BassMobile`: ~130 líneas (cálculo completo de flow field + wrap-around + lifespan)
+- `MidMobile`: ~130 líneas (mismo código repetido)
+- `TrebleMobile`: ~130 líneas (mismo código repetido)
+- **Total:** ~390 líneas con ~80% de código duplicado
+
+**✅ CON HERENCIA (código reutilizable):**
+
+Con herencia, separamos lo común de lo específico:
+
+- `Mobile` (mobile.js): 94 líneas (lógica común del flow field)
+- `BassMobile` (mobile_bass.js): 41 líneas (solo diferencias)
+- `MidMobile` (mobile_mid.js): ~35 líneas (solo diferencias)
+- `TrebleMobile` (mobile_treble.js): ~35 líneas (solo diferencias)
+- **Total:** ~205 líneas
+
+**Beneficios concretos:**
+
+| Métrica | Sin Herencia | Con Herencia | Mejora |
+|---------|--------------|--------------|--------|
+| Líneas de código | ~390 | ~205 | **-47%** |
+| Código duplicado | ~80% | 0% | **-100%** |
+| Mantenibilidad | Baja (3 lugares) | Alta (1 lugar) | ✅ |
+| Escalabilidad | Difícil | Fácil | ✅ |
+
+- ✅ **47% menos código** (205 vs 390 líneas)
+- ✅ **Mantenibilidad:** Cambios en el flow field solo se hacen en `Mobile.update()`
+- ✅ **Escalabilidad:** Agregar un nuevo tipo (ej: `SubBassMobile`) requiere solo ~35 líneas
+- ✅ **Consistencia:** Todas las partículas comparten la misma física base automáticamente
+- ✅ **Debugging:** Errores en el flow field se corrigen una sola vez
+
+</details>
+
+---
+
+<details>
+<summary><strong>📊 Conceptos de las 4 Unidades Anteriores Aplicados</strong></summary><br>
+
+<details>
+<summary><strong>Unidad 1: Aleatoriedad - Ruido Perlin</strong></summary><br>
+
+**¿Dónde?** En el cálculo del Flow Field
+
+```javascript
+// En Mobile.update()
+this.velocity = createVector(
+  1 - 2 * noise(a4 + a2 * sin(TAU * this.position.x / width),
+                a4 + a2 * sin(TAU * this.position.y / height)),
+  1 - 2 * noise(a2 + a3 * cos(TAU * this.position.x / width),
+                a4 + a3 * cos(TAU * this.position.y / height))
+);
+```
+
+**¿Cómo funciona?**
+- Usa `noise()` para generar valores suaves entre 0 y 1
+- Crea un campo vectorial continuo (flow field)
+- Las partículas siguen el campo de manera orgánica
+- `a1, a2, a3, a4` se mapean desde el audio, haciendo el campo reactivo
+
+**¿Por qué?**
+- `random()` crearía movimiento caótico y errático
+- `noise()` crea patrones fluidos como agua o viento
+- Es la base de los flow fields naturales
+
+</details>
+
+<details>
+<summary><strong>Unidad 2: Vectores - Operaciones Vectoriales</strong></summary><br>
+
+**¿Dónde?** En toda la física del movimiento
+
+```javascript
+// Velocidad como vector 2D
+this.velocity = createVector(x, y);
+
+// Posición actualizada con suma vectorial
+this.position.add(this.velocity);
+
+// Rotación vectorial
+this.velocity.rotate(sin(100) * noise(...));
+
+// Magnitud para wrap-around inteligente
+let distance = dist(pos0.x, pos0.y, pos.x, pos.y);
+```
+
+**¿Cómo funciona?**
+- Cada partícula tiene posición y velocidad como vectores
+- Se actualizan con operaciones vectoriales (`add`, `rotate`, `mult`)
+- Permite movimiento suave en 2D
+
+**¿Por qué?**
+- Los vectores representan dirección y magnitud simultáneamente
+- Facilitan cálculos de física
+- Permiten rotaciones y transformaciones elegantes
+
+</details>
+
+<details>
+<summary><strong>Unidad 3: Fuerzas - Masa y Reacción Diferenciada</strong></summary><br>
+
+**¿Dónde?** En las propiedades de cada tipo de partícula
+
+```javascript
+// BassMobile
+this.mass = 2;           // Más pesada
+this.speedMult = 0.7;    // Más lenta
+
+// MidMobile  
+this.mass = 1;           // Normal
+
+// TrebleMobile
+this.mass = 0.5;         // Más ligera
+this.speedMult = 1.5;    // Más rápida
+```
+
+**¿Cómo funciona?**
+- Partículas con mayor `mass` reaccionan más lentamente
+- `speedMult` escala la velocidad final
+- Diferentes tipos responden diferente a las mismas fuerzas del flow field
+
+**¿Por qué?**
+- Simula inercia: graves = pesados, agudos = ligeros
+- Crea variedad visual según la frecuencia
+- Representa metafóricamente el "peso" del sonido
+
+</details>
+
+<details>
+<summary><strong>Unidad 4: Oscilaciones - Funciones Trigonométricas</strong></summary><br>
+
+**¿Dónde?** En el cálculo del flow field y rotación
+
+```javascript
+// Uso de seno y coseno en el flow field
+sin(TAU * this.position.x / width)
+cos(TAU * this.position.y / height)
+
+// Rotación de velocidad
+this.velocity.rotate(sin(100) * noise(...));
+```
+
+**¿Cómo funciona?**
+- `sin()` y `cos()` crean patrones ondulantes
+- `TAU` (2π) permite ciclos completos
+- La rotación añade remolinos al movimiento
+
+**¿Por qué?**
+- Las funciones trigonométricas crean movimientos circulares/ondulantes
+- Son fundamentales para flow fields orgánicos
+- Añaden complejidad visual sin caos
+
+</details><br>
+
+</details>
+
+---
+
+<details>
+<summary><strong>🔄 Gestión de Tiempo de Vida y Memoria</strong></summary><br>
+
+**Sistema de Lifespan (ON por defecto - Toggle con L o botón):**
+
+```javascript
+// Cada partícula tiene:
+this.lifespan = 255;                    // Empieza en 255 vida y full color
+this.lifespanDecay = random(0.5, 2.5);  // Velocidad de muerte
+
+// En update():
+if (useLifespan) {
+  this.lifespan -= this.lifespanDecay;
+}
+
+// En display():
+let alpha = useLifespan ? this.lifespan : this.trans;
+```
+
+**Gestión de Memoria:**
+
+**Modo 1: Con Lifespan (DEFAULT - Demuestra gestión de memoria de Unidad 5)**
+```javascript
+// Eliminar partículas muertas
+if (useLifespan && mobiles[i].isDead()) {
+  mobiles.splice(i, 1);  // Liberar memoria
+}
+
+// Reponer automáticamente
+if (useLifespan && mobiles.length < nmobiles) {
+  let needed = nmobiles - mobiles.length;
+  // Crear nuevas partículas para mantener ~3000 activas
+  for (let i = 0; i < needed; i++) {
+    // Crear proporcionalmente Bass/Mid/Treble mobiles
+  }
+}
+```
+- **Por defecto desde el inicio** para demostrar los conceptos de la Unidad 5
+- Partículas mueren gradualmente y son reemplazadas
+- Array dinámico: `mobiles.length` fluctúa cerca de 3000
+- Demuestra uso de `splice()` para liberar memoria una vez mueren
+- Ciclo de vida continuo: nacimiento → vida → muerte → renacimiento
+
+**Modo 2: Sin Lifespan (Toggle L para desactivar)**
+- 3000 partículas permanentes e inmortales
+- Nunca mueren, nunca se eliminan
+- Array estable: `mobiles.length` siempre = 3000
+- Óptimo para rendimiento (sin overhead de crear/eliminar)
+
+</details>
+
+---
+
+<details>
+<summary><strong>🔄 CICLO DE VIDA de una particula</strong></summary><br>
+
+Esta sección documenta **técnicamente** cómo nace, vive, envejece, muere y renace una partícula.
+
+#### **1️⃣ NACIMIENTO** (Constructor)
+
+**Ubicación en código:** `mobile.js:3-21`
+
+```javascript
+constructor(index) {
+  // Inicialización de propiedades básicas...
+
+  // 🎂 Nacimiento con vida máxima
+  this.lifespan = 255;                    // ← NACE con vida completa (opacidad 100%)
+  this.lifespanDecay = random(0.5, 2);    // ← Velocidad de envejecimiento aleatoria
+}
+```
+
+**Valores iniciales:**
+- `lifespan = 255` (vida máxima, totalmente visible)
+- `lifespanDecay = random(0.5, 2)` (cada partícula envejece a diferente velocidad)
+
+**Variación por tipo de partícula:**
+```javascript
+// BassMobile - Partículas LONGEVAS
+this.lifespanDecay = random(0.3, 1);  // Mueren 2-3x más lento (representan graves "pesados")
+
+// MidMobile y TrebleMobile - Partículas NORMALES
+this.lifespanDecay = random(0.5, 2);  // Velocidad estándar
+```
+
+**Duración de vida esperada (a 60 FPS):**
+- **BassMobile**: 255 ÷ random(0.3, 1) = **255 a 850 frames** = **4.2 a 14 segundos**
+- **Mid/TrebleMobile**: 255 ÷ random(0.5, 2) = **127 a 510 frames** = **2 a 8.5 segundos**
+
+---
+
+#### **2️⃣ VIDA Y ENVEJECIMIENTO** (Update)
+
+**Ubicación en código:** `mobile.js:64-67`
+
+```javascript
+update(bass, mid, treble, level) {
+  // ... cálculos de física y movimiento ...
+
+  // ⏳ Envejecimiento gradual
+  if (useLifespan) {
+    this.lifespan -= this.lifespanDecay;  // ← ENVEJECE cada frame (60 veces/segundo)
+  }
+}
+```
+
+**Proceso de envejecimiento:**
+- Cada frame (1/60 de segundo), `lifespan` disminuye por `lifespanDecay`
+- Si `lifespanDecay = 1`, pierde **1 punto de vida** por frame
+- Si `lifespanDecay = 2`, pierde **2 puntos de vida** por frame (muere el doble de rápido)
+
+**Ejemplo de progresión temporal:**
+```
+Frame 0:    lifespan = 255   (recién nacida, opaca)
+Frame 1:    lifespan = 254   (si decay = 1)
+Frame 60:   lifespan = 195   (1 segundo de vida)
+Frame 127:  lifespan = 128   (mitad de vida, 50% transparente)
+Frame 254:  lifespan = 1     (casi muerta, casi invisible)
+Frame 255:  lifespan = 0     (muerta, invisible)
+Frame 256:  lifespan = -1    (MARCADA PARA ELIMINACIÓN)
+```
+
+---
+
+#### **3️⃣ VISUALIZACIÓN** (Display)
+
+**Ubicación en código:** `mobile.js:70-88`
+
+```javascript
+display() {
+  // 🎨 El lifespan controla la transparencia (alpha)
+  let alpha = useLifespan ? this.lifespan : this.trans;
+
+  // Dibujar línea con opacidad = lifespan
+  stroke(this.hu, this.sat, this.bri, alpha);  // ← Alpha varía de 255 a 0
+  line(this.position0.x, this.position0.y, this.position.x, this.position.y);
+}
+```
+
+**Efecto visual del envejecimiento:**
+- `lifespan = 255` → Partícula **totalmente visible** (opacidad 100%)
+- `lifespan = 192` → Partícula **visible** (opacidad 75%)
+- `lifespan = 128` → Partícula **semi-transparente** (opacidad 50%)
+- `lifespan = 64` → Partícula **muy transparente** (opacidad 25%)
+- `lifespan = 0` → Partícula **invisible** (opacidad 0%)
+
+**Resultado:** Las partículas se **desvanecen gradualmente** antes de morir, creando un efecto visual suave de extinción.
+
+---
+
+#### **4️⃣ MUERTE** (isDead)
+
+**Ubicación en código:** `mobile.js:90-93`
+
+```javascript
+isDead() {
+  return useLifespan && this.lifespan < 0;  // ← Muere cuando cruza el umbral de 0
+}
+```
+
+**Condición de muerte:**
+- Si `useLifespan = true` **Y** `lifespan < 0` → La partícula está **oficialmente muerta**
+- Nota: Cuando `lifespan = 0` aún está "viva" pero invisible
+- Muere realmente cuando `lifespan` se vuelve **negativo**
+
+---
+
+#### **5️⃣ ELIMINACIÓN Y RENACIMIENTO** (Draw Loop)
+
+**Ubicación en código:** `sketch.js:155-182`
+
+```javascript
+// ⚰️ ELIMINACIÓN: Recorrer array AL REVÉS para poder eliminar sin problemas
+for (let i = mobiles.length - 1; i >= 0; i--) {
+  mobiles[i].run(bass, mid, treble, level);
+
+  // Si está muerta, ELIMINAR del array
+  if (useLifespan && mobiles[i].isDead()) {
+    mobiles.splice(i, 1);  // ← LIBERA MEMORIA (eliminación física del array)
+  }
+}
+
+// 🌱 RENACIMIENTO: Reponer partículas eliminadas
+if (useLifespan && mobiles.length < nmobiles) {
+  let needed = nmobiles - mobiles.length;  // Calcular cuántas faltan
+
+  for (let i = 0; i < needed; i++) {
+    let r = random(1);
+    // Crear nuevas partículas en proporciones iguales (33% cada tipo)
+    if (r < 0.33) {
+      mobiles.push(new BassMobile(mobiles.length));  // ← NACE nueva partícula Bass
+    } else if (r < 0.66) {
+      mobiles.push(new MidMobile(mobiles.length));   // ← NACE nueva partícula Mid
+    } else {
+      mobiles.push(new TrebleMobile(mobiles.length)); // ← NACE nueva partícula Treble
+    }
+  }
+}
+```
+
+**Proceso completo de eliminación y renacimiento:**
+
+1. **Detección**: `isDead()` retorna `true` cuando `lifespan < 0`
+2. **Eliminación**: `splice(i, 1)` remueve la partícula del array
+3. **Liberación de memoria**: JavaScript garbage collector eventualmente libera la memoria
+4. **Detección de faltantes**: Se compara `mobiles.length < 3000`
+5. **Cálculo**: `needed = 3000 - mobiles.length` (ej: si quedan 2997, needed = 3)
+6. **Creación**: Se crean `needed` partículas nuevas en proporciones balanceadas
+7. **Renacimiento**: Nuevas partículas nacen con `lifespan = 255` (vuelve al paso 1 ⟲)
+
+---
+
+#### **📊 DIAGRAMA DE FLUJO DEL CICLO DE VIDA**
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│                  CICLO DE VIDA DE UNA PARTÍCULA               │
+└───────────────────────────────────────────────────────────────┘
+
+    ┌─────────────────┐
+    │  1. NACIMIENTO  │  Constructor: lifespan = 255
+    └────────┬────────┘
+             │
+             ▼
+    ┌─────────────────┐
+    │  2. VIDA        │  Cada frame: lifespan -= decay
+    │  (255 → 0)      │  Se mueve según flow field
+    └────────┬────────┘  Dura 2-14 segundos
+             │
+             ▼
+    ┌─────────────────┐
+    │  3. VISUAL      │  display(): alpha = lifespan
+    │  (Desvanece)    │  255 (opaco) → 0 (invisible)
+    └────────┬────────┘
+             │
+             ▼
+    ┌─────────────────┐
+    │  4. MUERTE      │  isDead(): lifespan < 0
+    └────────┬────────┘
+             │
+             ▼
+    ┌─────────────────┐
+    │  5. ELIMINACIÓN │  splice(i, 1)
+    │  (Libera RAM)   │  mobiles.length disminuye
+    └────────┬────────┘
+             │
+             ▼
+    ┌─────────────────┐
+    │  6. RENACIMIENTO│  new Mobile()
+    │  (Reposición)   │  Mantener ~3000 activas
+    └────────┬────────┘
+             │
+             └──────────────┐
+                            │
+                            ▼
+                     Vuelve al paso 1 ⟲
+```
+
+---
+
+#### **🔬 VALORES CLAVE**
+
+| Variable | Ubicación | Rango | Significado |
+|----------|-----------|-------|-------------|
+| `this.lifespan` | Mobile class | 255 → -1 | Vida actual de la partícula |
+| `this.lifespanDecay` | Mobile class | 0.3 - 2 | Velocidad de envejecimiento |
+| `mobiles.length` | sketch.js | ~3000 | Partículas activas en el sistema |
+| `useLifespan` | sketch.js | true/false | Sistema activado/desactivado |
+
+**Comportamiento dinámico del array:**
+- Con Lifespan ON: `mobiles.length` fluctúa (ej: 2995 → 2998 → 3001 → 2997)
+- Con Lifespan OFF: `mobiles.length` = 3000 (constante)
+
+**Observación en tiempo real:**
+- Puedes ver el número de partículas activas en el UI: `Partículas: ${mobiles.length}`
+- El número fluctúa constantemente demostrando el ciclo de muerte/renacimiento
+
+---
+
+**Estrategia de Wrap-Around:**
+```javascript
+// Ajustar AMBAS posiciones al cruzar bordes
+if (this.position.x > width) {
+  this.position.x -= width;
+  this.position0.x -= width;  // ← Clave para evitar líneas atravesadas
+}
+```
+- Previene líneas que atraviesan el canvas
+- Mantiene continuidad visual
+
+</details>
+
+---
+
+<details>
+<summary><strong>🎵 Análisis de Audio en Tiempo Real</strong></summary><br>
+
+**Setup de Audio:**
+
+```javascript
+fft = new p5.FFT(0.8, 512);      // Smoothing, bins
+amplitude = new p5.Amplitude();
+
+// Conectar al audio
+fft.setInput(song);
+amplitude.setInput(song);
+```
+
+**En cada frame:**
+
+```javascript
+fft.analyze();  // ← CRÍTICO: analizar primero
+
+let bass = fft.getEnergy("bass");      // 0-255 (20-140 Hz)
+let mid = fft.getEnergy("mid");        // 0-255 (140-2000 Hz)
+let treble = fft.getEnergy("treble");  // 0-255 (2000-20000 Hz)
+let level = amplitude.getLevel();      // 0-1 (volumen general)
+
+// Mapear a parámetros del flow field
+a1 = map(bass, 0, 255, 0.5, 5);     // Bass → a1
+a2 = map(mid, 0, 255, 0.5, 5);      // Mid → a2
+a3 = map(treble, 0, 255, 0.5, 5);   // Treble → a3
+a4 = map(level, 0, 0.5, 0.5, 3);    // Level → a4
+a5 = map(level, 0, 1, 5, 15);       // Level → velocidad global
+```
+
+</details>
+
+---
+
+<details>
+<summary><strong>📊 Cómo cada frecuencia afecta el flow field</strong></summary>
+
+Esta sección explica **técnicamente** cómo el audio controla el comportamiento visual de las partículas.
+
+<details>
+<summary><strong>1️⃣ BASS (Graves) → Parámetro `a1`</strong></summary><br>
+
+**Rango de frecuencias:** 20-140 Hz (sonidos profundos como kicks, bajo, tambores graves)
+
+**Qué controla en el código:**
+```javascript
+// En Mobile.update() - Componente X de la velocidad
+1 - 2 * noise(a4 + a2 * sin(TAU * this.position.x / width), ...)
+```
+
+**Efecto visual:**
+- Controla la **dirección horizontal** del campo vectorial
+- A mayor bass → mayor variación en `a1` → el flow field cambia más dramáticamente en el eje X
+- Las partículas cambian de dirección horizontal de forma más pronunciada
+
+**Reacción específica de BassMobile:**
+```javascript
+// Cuando bass > 200 (graves muy fuertes)
+if (bass > 200) {
+  this.trans += 5;                              // Más visibles (transparencia aumenta)
+  this.strokeWeight = map(bass, 200, 255, 1.5, 3);  // Líneas más GRUESAS
+}
+```
+- Las partículas rojas/naranjas se vuelven **más brillantes y más gruesas** cuando hay graves fuertes
+- Representan visualmente el "peso" del bass
+
+</details>
+
+<details>
+<summary><strong>2️⃣ MID (Medios) → Parámetro `a2`</strong></summary><br>
+
+**Rango de frecuencias:** 140-2000 Hz (voces, guitarras, la mayoría de melodías)
+
+**Qué controla en el código:**
+```javascript
+// En Mobile.update() - Intensidad del campo
+a2 * sin(TAU * this.position.x / width)
+a2 * sin(TAU * this.position.y / height)
+```
+
+**Efecto visual:**
+- Controla la **intensidad y complejidad** del campo vectorial
+- A mayor mid → mayor `a2` → el campo se vuelve más denso y complejo
+- Las ondas sinusoidales tienen mayor amplitud, creando patrones más elaborados
+
+**Reacción específica de MidMobile:**
+```javascript
+// Cuando mid > 180
+if (mid > 180) {
+  this.hu = map(mid, 180, 255, 120, 200);  // Cambian de COLOR dinámicamente
+}
+```
+- Las partículas verdes/azules **cambian de tono** según la intensidad de los medios
+- Del verde (120°) al azul cian (200°) en el espectro HSB
+
+</details>
+
+<details>
+<summary><strong>3️⃣ TREBLE (Agudos) → Parámetro `a3`</strong></summary><br>
+
+**Rango de frecuencias:** 2000-20000 Hz (platillos, hi-hats, brillos, notas agudas)
+
+**Qué controla en el código:**
+```javascript
+// En Mobile.update() - Rotación del campo
+this.velocity.rotate(sin(100) * noise(a4 + a3 * sin(TAU * this.position.x / width)));
+
+// Y en el componente Y de la velocidad
+a3 * cos(TAU * this.position.x / width)
+a3 * cos(TAU * this.position.y / height)
+```
+
+**Efecto visual:**
+- Controla las **rotaciones y remolinos** del campo vectorial
+- A mayor treble → mayor `a3` → más espirales y giros en el movimiento
+- Las partículas crean patrones circulares más pronunciados
+
+**Reacción específica de TrebleMobile:**
+```javascript
+// Cuando treble > 160
+if (treble > 160) {
+  this.speedMult = map(treble, 160, 255, 1.5, 2.5);  // Se ACELERAN
+}
+```
+- Las partículas magentas se vuelven **hasta 2.5x más rápidas**
+- Representan la energía y rapidez de los agudos
+
+</details>
+
+<details>
+<summary><strong>4️⃣ LEVEL (Volumen general) → Parámetros `a4` + `a5`</strong></summary><br>
+
+**Qué mide:** Amplitud general del audio (volumen total)
+
+**Qué controla en el código:**
+```javascript
+// a4: Usado en el cálculo base del noise
+noise(a4 + a2 * sin(...), a4 + a2 * sin(...))
+
+// a5: Multiplicador de velocidad GLOBAL
+this.velocity.mult(a5 * this.speedMult);
+```
+
+**Efecto visual:**
+- `a4` añade variación constante al campo de ruido
+- `a5` controla la **velocidad global** de TODAS las partículas
+- A mayor volumen → todas las partículas se mueven más rápido
+- Rango: de 5 (silencio) a 15 (volumen máximo)
+
+</details>
+
+---
+
+**🎨 RESUMEN: Mapeo Audio → Visual**
+
+| Frecuencia | Parámetro | Controla | Efecto Visual |
+|------------|-----------|----------|---------------|
+| **BASS** | `a1` | Dirección horizontal | Cambios dramáticos en eje X |
+| **MID** | `a2` | Intensidad del campo | Patrones más densos y complejos |
+| **TREBLE** | `a3` | Rotaciones | Remolinos y espirales |
+| **LEVEL** | `a4`, `a5` | Variación + Velocidad | Movimiento general más rápido |
+
+**Ejemplo de flujo completo:**
+1. Una canción con **graves fuertes** → `a1` aumenta → Las BassMobile (rojas) se vuelven gruesas y el campo cambia en X
+2. **Melodía intensa** → `a2` aumenta → Las MidMobile (verdes) cambian de color y el campo es más complejo
+3. **Platillos/hi-hats** → `a3` aumenta → Las TrebleMobile (magentas) se aceleran y el campo rota más
+4. **Volumen alto** → `a5` aumenta → Todas se mueven más rápido
+
+</details>
+
+---
+
+<details>
+    <summary><strong>💻 Código fuente completo</strong></summary><br>
+
+
+<details>
+    <summary>sketch.js</summary><br>
+
+```js
+let song;
+let fft;
+let amplitude;
+let fileInput;
+let songName = "Poshlaya molly - non stop";
+let volumeSlider;
+let toggleUIButton;
+
+let nmobiles = 3000;
+let mobiles = [];
+let noisescale;
+let a1, a2, a3, a4, a5, amax;
+let bw = false;
+let showUI = false;
+let useLifespan = true;
+
+function preload() {
+  song = loadSound('Poshlaya molly - non stop.mp3', () => {
+    console.log('✓ Archivo de audio cargado en preload');
+  }, (err) => {
+    console.error('✌ Error cargando audio:', err);
+  });
+}
+
+function setup() {
+  createCanvas(800, 800);
+  background(0);
+  noFill();
+  colorMode(HSB, 360, 255, 255, 255);
+  strokeWeight(0.5);
+  fft = new p5.FFT(0.8, 512);
+  amplitude = new p5.Amplitude();
+  setupFileInput();
+  setupVolumeSlider();
+  setupToggleUIButton();
+  if (song && song.isLoaded()) {
+    fft.setInput(song);
+    amplitude.setInput(song);
+    song.setVolume(0.5);
+    song.loop();
+    console.log('✓ FFT conectado y música iniciada');
+  } else {
+    console.log('⚠ Esperando que el audio termine de cargar...');
+  }
+  reset();
+}
+
+function draw() {
+
+  background(0, 10);
+  
+  if (song && song.isPlaying()) {
+    
+    if (frameCount < 10) {
+      fft.setInput(song);
+      amplitude.setInput(song);
+    }
+    fft.analyze();
+    let bass = fft.getEnergy("bass");
+    let mid = fft.getEnergy("mid");
+    let treble = fft.getEnergy("treble");
+    let level = amplitude.getLevel();
+    a1 = map(bass, 0, 255, 0.5, 5);
+    a2 = map(mid, 0, 255, 0.5, 5);
+    a3 = map(treble, 0, 255, 0.5, 5);
+    a4 = map(level, 0, 0.5, 0.5, 3);
+    a5 = map(level, 0, 1, 5, 15);
+    for (let i = mobiles.length - 1; i >= 0; i--) {
+      mobiles[i].run(bass, mid, treble, level);
+      if (useLifespan && mobiles[i].isDead()) {
+        mobiles.splice(i, 1);
+      }
+    }
+    if (useLifespan && mobiles.length < nmobiles) {
+      let needed = nmobiles - mobiles.length;
+      for (let i = 0; i < needed; i++) {
+        let r = random(1);
+        if (r < 0.33) {
+          mobiles.push(new BassMobile(mobiles.length));
+        } else if (r < 0.66) {
+          mobiles.push(new MidMobile(mobiles.length));
+        } else {
+          mobiles.push(new TrebleMobile(mobiles.length));
+        }
+      }
+    }
+    
+    if (showUI) {
+      drawUI(bass, mid, treble, level);
+      drawFrequencyBars(bass, mid, treble);
+    }
+    
+  } else {
+    
+    if (showUI) {
+      drawUI(0, 0, 0, 0);
+    }
+  }
+}
+
+
+function setupFileInput() {
+  fileInput = createFileInput(handleFile);
+  fileInput.position(10, height + 10);
+  fileInput.style('color', '#fff');
+  fileInput.style('background-color', '#333');
+  fileInput.style('border', '1px solid #666');
+  fileInput.style('padding', '5px');
+}
+
+function setupVolumeSlider() {
+  volumeSlider = createSlider(0, 100, 50, 1);
+  volumeSlider.position(10, height + 50);
+  volumeSlider.style('width', '150px');
+  volumeSlider.input(() => {
+    if (song) {
+      song.setVolume(volumeSlider.value() / 100);
+    }
+  });
+}
+
+function setupToggleUIButton() {
+  toggleUIButton = createButton('👁');
+  toggleUIButton.position(15, 15);
+  toggleUIButton.size(40, 40);
+  toggleUIButton.style('font-size', '20px');
+  toggleUIButton.style('background-color', 'rgba(0, 0, 0, 0.7)');
+  toggleUIButton.style('color', '#fff');
+  toggleUIButton.style('border', '2px solid rgba(255, 255, 255, 0.3)');
+  toggleUIButton.style('border-radius', '8px');
+  toggleUIButton.style('cursor', 'pointer');
+  toggleUIButton.style('transition', 'all 0.3s');
+  toggleUIButton.mouseOver(() => {
+    toggleUIButton.style('background-color', 'rgba(50, 50, 50, 0.9)');
+    toggleUIButton.style('border-color', 'rgba(255, 255, 255, 0.6)');
+  });
+  toggleUIButton.mouseOut(() => {
+    toggleUIButton.style('background-color', 'rgba(0, 0, 0, 0.7)');
+    toggleUIButton.style('border-color', 'rgba(255, 255, 255, 0.3)');
+  });
+  toggleUIButton.mousePressed(() => {
+    showUI = !showUI;
+  });
+}
+
+function handleFile(file) {
+  if (file.type === 'audio') {
+    console.log('Cargando nueva canción...');
+    songName = file.name.replace(/\.[^/.]+$/, "");
+    if (song && song.isPlaying()) {
+      song.stop();
+    }
+    song = loadSound(file.data, () => {
+      console.log('✓ Nueva canción cargada y reproduciéndose');
+      song.loop();
+      song.setVolume(0.5);
+
+      fft.setInput(song);
+      amplitude.setInput(song);
+      console.log('✓ FFT y Amplitude conectados a la nueva canción');
+    });
+  } else {
+    console.log('⚠ Por favor sube un archivo de audio válido');
+    alert('Por favor selecciona un archivo de audio (mp3, wav, ogg)');
+  }
+}
+
+function reset() {
+  noisescale = random(0.08, 0.1);
+  noiseDetail(int(random(1, 5)));
+  amax = random(5);
+  a1 = random(1, amax);
+  a2 = random(1, amax);
+  a3 = random(1, amax);
+  a4 = random(1, amax);
+  a5 = 10;
+  mobiles = [];
+  let third = floor(nmobiles / 3);
+  for (let i = 0; i < third; i++) {
+    mobiles.push(new BassMobile(i));
+  }
+  for (let i = third; i < third * 2; i++) {
+    mobiles.push(new MidMobile(i));
+  }
+  for (let i = third * 2; i < nmobiles; i++) {
+    mobiles.push(new TrebleMobile(i));
+  }
+  console.log('Reset completado');
+}
+
+function drawUI(bass, mid, treble, level) {
+  push();
+  fill(0, 180);
+  noStroke();
+  rect(65, 5, 280, 120, 5);
+  fill(255);
+  textSize(12);
+  textAlign(LEFT);
+  text(`FPS: ${floor(frameRate())}`, 70, 20);
+  text(`Partículas: ${mobiles.length}`, 70, 35);
+  text(`Música: ${song && song.isPlaying() ? 'Play ▶' : 'Pause ⏸'}`, 70, 50);
+  text(`Modo: ${bw ? 'B/N' : 'Color'}`, 70, 65);
+  text(`Lifespan: ${useLifespan ? 'ON' : 'OFF'}`, 70, 80);
+  text(`Volumen: ${volumeSlider.value()}%`, 70, 95);
+  fill(100, 255, 255);
+  textSize(11);
+  let displayName = songName.length > 30 ? songName.substring(0, 30) + "..." : songName;
+  text(`♪ ${displayName}`, 70, 110);
+  fill(0, 180);
+  rect(5, height - 60, width - 10, 55, 5);
+
+  fill(255);
+  textSize(11);
+  text('CONTROLES:', 10, height - 45);
+  text('SPACE: Reset | P: Pausa | B: B/N | C: Limpiar | S: Screenshot', 10, height - 30);
+  text('U: Toggle UI | L: Toggle Lifespan | R: Reiniciar Todo', 10, height - 15);
+
+  pop();
+}
+
+function drawFrequencyBars(bass, mid, treble) {
+  push();
+  
+  let x = width - 140;
+  let y = 20;
+  let barWidth = 35;
+  let barMaxHeight = 120;
+  
+  fill(0, 200);
+  noStroke();
+  rect(x - 10, y - 10, 140, barMaxHeight + 50, 5);
+  let bassHeight = max(map(bass, 0, 255, 0, barMaxHeight), 2);
+  let midHeight = max(map(mid, 0, 255, 0, barMaxHeight), 2);
+  let trebleHeight = max(map(treble, 0, 255, 0, barMaxHeight), 2);
+  fill(20, 255, 255, 220);
+  noStroke();
+  rect(x, y + barMaxHeight - bassHeight, barWidth, bassHeight, 2);
+  noFill();
+  stroke(20, 255, 255, 150);
+  strokeWeight(2);
+  rect(x, y, barWidth, barMaxHeight, 2);
+  fill(20, 255, 255);
+  noStroke();
+  textSize(11);
+  textAlign(CENTER);
+  text('BASS', x + barWidth/2, y + barMaxHeight + 18);
+  textSize(10);
+  fill(255);
+  text(floor(bass), x + barWidth/2, y + barMaxHeight + 32);
+  fill(120, 255, 255, 220);
+  noStroke();
+  rect(x + 45, y + barMaxHeight - midHeight, barWidth, midHeight, 2);
+  noFill();
+  stroke(120, 255, 255, 150);
+  strokeWeight(2);
+  rect(x + 45, y, barWidth, barMaxHeight, 2);
+  fill(120, 255, 255);
+  noStroke();
+  textSize(11);
+  text('MID', x + 45 + barWidth/2, y + barMaxHeight + 18);
+  textSize(10);
+  fill(255);
+  text(floor(mid), x + 45 + barWidth/2, y + barMaxHeight + 32);
+  fill(300, 255, 255, 220);
+  noStroke();
+  rect(x + 90, y + barMaxHeight - trebleHeight, barWidth, trebleHeight, 2);
+  noFill();
+  stroke(300, 255, 255, 150);
+  strokeWeight(2);
+  rect(x + 90, y, barWidth, barMaxHeight, 2);
+  fill(300, 255, 255);
+  noStroke();
+  textSize(11);
+  text('TREB', x + 90 + barWidth/2, y + barMaxHeight + 18);
+  textSize(10);
+  fill(255);
+  text(floor(treble), x + 90 + barWidth/2, y + barMaxHeight + 32);
+  pop();
+}
+
+function keyPressed() {
+  if (keyCode === 32) {
+    reset();
+    return false;
+  }
+  if (key === 'p' || key === 'P') {
+    if (song) {
+      if (song.isPlaying()) {
+        song.pause();
+      } else {
+        song.play();
+      }
+    }
+  }
+  if (key === 'b' || key === 'B') {
+    bw = !bw;
+  }
+  if (key === 'c' || key === 'C') {
+    background(0);
+  }
+  if (key === 's' || key === 'S') {
+    saveCanvas("FlowFieldSonico_" + year() + month() + day() + "_" + hour() + minute() + second() + ".png");
+    console.log('Screenshot guardado');
+  }
+  if (key === 'r' || key === 'R') {
+    if (song) {
+      song.stop();
+      song.loop();
+    }
+    background(0);
+    reset();
+  }
+  if (key === 'u' || key === 'U') {
+    showUI = !showUI;
+  }
+  if (key === 'l' || key === 'L') {
+    useLifespan = !useLifespan;
+    console.log('Lifespan:', useLifespan);
+  }
+  return false;
+}
+```
+
+</details>
+
+<details>
+    <summary>mobile.js</summary><br>
+
+```js
+// MOBILE (Clase Padre)
+class Mobile {
+  constructor(index) {
+    this.index = index;
+    this.velocity = createVector(0, 0);
+    this.position0 = createVector(random(width), random(height));
+    this.position = this.position0.copy();
+    this.trans = random(50, 100);
+    this.hu = (noise(a1 * cos(PI * this.position.x / width), a1 * sin(PI * this.position.y / height)) * 720) % 360;
+    this.sat = noise(a2 * sin(PI * this.position.x / width), a2 * sin(PI * this.position.y / height)) * 255;
+    this.bri = noise(a3 * cos(PI * this.position.x / width), a3 * cos(PI * this.position.y / height)) * 255;
+    this.mass = 1;
+    this.speedMult = 1;
+    this.strokeWeightVal = 0.5;
+    this.lifespan = 255;
+    this.lifespanDecay = random(0.5, 2);
+  }
+  run(bass, mid, treble, level) {
+    this.update(bass, mid, treble, level);
+    this.display();
+  }
+  update(bass, mid, treble, level) {
+    this.velocity = createVector(
+      1 - 2 * noise(a4 + a2 * sin(TAU * this.position.x / width),
+                    a4 + a2 * sin(TAU * this.position.y / height)),
+      1 - 2 * noise(a2 + a3 * cos(TAU * this.position.x / width),
+                    a4 + a3 * cos(TAU * this.position.y / height))
+    );
+    this.velocity.mult(a5 * this.speedMult);
+    this.velocity.rotate(sin(100) * noise(a4 + a3 * sin(TAU * this.position.x / width)));
+    this.position0 = this.position.copy();
+    this.position.add(this.velocity);
+    if (this.position.x > width) {
+      this.position.x = this.position.x - width;
+      this.position0.x = this.position0.x - width;
+    }
+    if (this.position.x < 0) {
+      this.position.x = this.position.x + width;
+      this.position0.x = this.position0.x + width;
+    }
+    if (this.position.y > height) {
+      this.position.y = this.position.y - height;
+      this.position0.y = this.position0.y - height;
+    }
+    if (this.position.y < 0) {
+      this.position.y = this.position.y + height;
+      this.position0.y = this.position0.y + height;
+    }
+    if (useLifespan) {
+      this.lifespan -= this.lifespanDecay;
+    }
+  }
+  display() {
+    let alpha = useLifespan ? this.lifespan : this.trans;
+    let distance = dist(this.position0.x, this.position0.y, 
+                       this.position.x, this.position.y);
+    if (distance < 50) {
+      if (bw) {
+        stroke(255, alpha);
+      } else {
+        stroke(this.hu, this.sat, this.bri, alpha);
+      }
+      strokeWeight(this.strokeWeightVal);
+      line(this.position0.x, this.position0.y, this.position.x, this.position.y);
+    }
+  }
+  isDead() {
+    return useLifespan && this.lifespan < 0;
+  }
+}
+```
+
+</details>
+
+<details>
+    <summary>mobile_bass.js</summary><br>
+
+```js
+// BASS (Graves)
+class BassMobile extends Mobile {
+  constructor(index) {
+    super(index);
+    this.mass = 2;
+    this.speedMult = 0.7;
+    this.strokeWeightVal = 1.5;
+    this.trans = random(100, 150);
+    this.hu = random(0, 40);
+    this.lifespanDecay = random(0.3, 1);
+  }
+  update(bass, mid, treble, level) {
+    super.update(bass, mid, treble, level);
+    if (bass > 200) {
+      this.trans = constrain(this.trans + 5, 100, 255);
+      this.strokeWeightVal = map(bass, 200, 255, 1.5, 3);
+    } else {
+      this.trans = lerp(this.trans, 120, 0.05);
+      this.strokeWeightVal = lerp(this.strokeWeightVal, 1.5, 0.05);
+    }
+  }
+  display() {
+    let alpha = useLifespan ? this.lifespan : this.trans;
+    let distance = dist(this.position0.x, this.position0.y, 
+                       this.position.x, this.position.y);
+    if (distance < 50) {
+      if (bw) {
+        stroke(255, alpha);
+      } else {
+        stroke(this.hu, 200, 255, alpha);
+      }
+      strokeWeight(this.strokeWeightVal);
+      line(this.position0.x, this.position0.y, this.position.x, this.position.y);
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+    <summary>mobile_mid.js</summary><br>
+
+```js
+// MID (Medios)
+class MidMobile extends Mobile {
+  constructor(index) {
+    super(index);
+    this.mass = 1;
+    this.speedMult = 1;
+    this.strokeWeightVal = 0.8;
+    this.trans = random(70, 110);
+    this.hu = random(120, 200);
+    this.lifespanDecay = random(0.5, 1.5);
+  }
+  update(bass, mid, treble, level) {
+    super.update(bass, mid, treble, level);
+    if (mid > 180) {
+      this.speedMult = map(mid, 180, 255, 1, 1.5);
+    } else {
+      this.speedMult = lerp(this.speedMult, 1, 0.05);
+    }
+  }
+  display() {
+    let alpha = useLifespan ? this.lifespan : this.trans;
+    let distance = dist(this.position0.x, this.position0.y, 
+                        this.position.x, this.position.y);
+    if (distance < 50) {
+      if (bw) {
+        stroke(255, alpha);
+      } else {
+        stroke(this.hu, 150, 255, alpha);
+      }
+      strokeWeight(this.strokeWeightVal);
+      line(this.position0.x, this.position0.y, this.position.x, this.position.y);
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+    <summary>mobile_treble.js</summary><br>
+
+```js
+// TREBLE(Agudos)
+class TrebleMobile extends Mobile {
+  constructor(index) {
+    super(index);
+    this.mass = 0.5;
+    this.speedMult = 1.5;
+    this.strokeWeightVal = 0.3;
+    this.trans = random(50, 90);
+    this.hu = random(280, 360);
+    this.lifespanDecay = random(1, 2.5);
+  }
+  update(bass, mid, treble, level) {
+    super.update(bass, mid, treble, level);
+    if (treble > 160) {
+      this.speedMult = map(treble, 160, 255, 1.5, 2.5);
+      this.trans = constrain(this.trans + 3, 50, 150);
+    } else {
+      this.speedMult = lerp(this.speedMult, 1.5, 0.05);
+      this.trans = lerp(this.trans, 70, 0.05);
+    }
+  }
+  display() {
+    let alpha = useLifespan ? this.lifespan : this.trans;
+    let distance = dist(this.position0.x, this.position0.y, 
+                       this.position.x, this.position.y);
+    if (distance < 50) {
+      if (bw) {
+        stroke(255, alpha);
+      } else {
+        stroke(this.hu, 255, 255, alpha);
+      }
+      strokeWeight(this.strokeWeightVal);
+      line(this.position0.x, this.position0.y, this.position.x, this.position.y);
+    }
+  }
+}
+```
+
+</details>
+
+
+</details>
+
+
+---
+
+### 📸 FASE 3: CAPTURAS
+
+#### Capturas de Pantalla
+
+
+**🔗 Enlace p5.js:** [Ver en vivo](https://editor.p5js.org/DanieLudens/sketches/uMtu_LL9O)
+
+**🎵 Canción por defecto:** [Poshlaya molly - non stop](https://open.spotify.com/intl-es/track/3uMUdlo47oEes3kgL4T4EC?si=7c41d9e7b37b43e7) 
+
+<img width="500" src="https://github.com/user-attachments/assets/5e8666dc-4430-4c59-827f-5ee14e569b42">
+
+
+
+---
 
 
 ## Reflect: Consolidación y metacognición 🤔
