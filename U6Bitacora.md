@@ -58,30 +58,28 @@ El trabajo de Tyler Hobbs me inspira por:
 En esta actividad quiero que investigues alrededor de estas tres preguntas:
 
 <details>
-<summary>❓ 1. ¿Qué es una fuerza de dirección (steering force)?</summary>
+<summary>1. ¿Qué es una fuerza de dirección (steering force)?</summary><br>
 
-### Definición
 Una **steering force** (fuerza de dirección) es una fuerza que le indica al agente "hacia dónde debería dirigirse" para alcanzar un comportamiento deseado. No es simplemente mover el agente a un punto, sino calcular la fuerza necesaria para que el agente SE DIRIJA hacia ese comportamiento de manera gradual y natural.
 
-#### Fórmula conceptual
 ```
 steering = velocidad_deseada - velocidad_actual
 ```
 
-#### Componentes
+**Componentes**
 
 - **Velocidad deseada**: Hacia dónde QUEREMOS que vaya el agente (dirección + velocidad ideal)
 - **Velocidad actual**: Hacia dónde va AHORA el agente
 - **Steering force**: La diferencia entre ambas - qué fuerza aplicar para "corregir el rumbo"
 
-#### Características importantes
+**Características importantes**
 
 1. **Limitación de fuerza**: Se limita con un `maxforce` - el agente no puede girar instantáneamente, lo que genera movimientos más realistas
 2. **Movimientos naturales**: Produce trayectorias suaves y orgánicas, no saltos bruscos
 3. **Combinabilidad**: Permite comportamientos complejos combinando múltiples steering forces
 4. **Autonomía**: El agente "decide" su movimiento basándose en lo que percibe
 
-#### Ejemplo visual
+**Ejemplo visual**
 ```
 Agente actual: →
 Objetivo:      ↗
@@ -90,9 +88,152 @@ Steering:      ↑ (la fuerza que lo "jala" hacia arriba para corregir rumbo)
 
 </details>
 
-3. ¿Qué diferencia tiene este tipo de fuerza con las que ya hemos estudiado en el contexto de la simulación de agentes?
-4. ¿Qué relación tiene la steering force con Craig Reynolds y su trabajo en simulación de comportamiento animal?
 
+<details>
+<summary>2. ¿Qué diferencia tiene con las fuerzas tradicionales?</summary><br>
+
+**Fuerzas físicas tradicionales (que ya hemos estudiado)**
+
+**Ejemplos**:
+- **Gravedad**: Siempre apunta hacia abajo, es constante
+- **Fricción**: Opuesta al movimiento, proporcional a la velocidad
+- **Viento**: Empuja en una dirección fija o variable
+- **Empuje**: Fuerza externa aplicada al objeto
+
+**Características**:
+- Son fuerzas **externas** al agente
+- Son fuerzas **del entorno** o del mundo físico
+- Son **pasivas** - el objeto las "sufre"
+- Son **predecibles** - siguen leyes físicas fijas
+
+**Steering forces (nuevas)**
+
+**Características**:
+- Son fuerzas **internas** - el agente las calcula basándose en su "deseo"
+- Son **dinámicas e inteligentes** - cambian según lo que el agente "quiere hacer"
+- **Dependen del estado actual** del agente (su velocidad y posición)
+- Simulan **autonomía y toma de decisiones**
+- Son **activas** - el agente "elige" aplicarlas
+
+**Tabla comparativa**
+
+| Aspecto | Fuerzas Tradicionales | Steering Forces |
+|---------|----------------------|-----------------|
+| **Origen** | Externas (entorno) | Internas (agente) |
+| **Naturaleza** | Pasivas | Activas (autónomas) |
+| **Comportamiento** | Fijas/predecibles | Dinámicas/adaptativas |
+| **Objetivo** | Simular física | Simular inteligencia |
+| **Ejemplo** | "La gravedad me jala" | "YO quiero ir allá" |
+
+**Ejemplo comparativo**
+
+**Escenario**: Un pájaro volando hacia un árbol
+
+- **Con fuerzas tradicionales**:
+  - Gravedad lo jala hacia abajo
+  - Viento lo empuja lateralmente
+  - El pájaro "sufre" estas fuerzas
+
+- **Con steering forces**:
+  - El pájaro "ve" el árbol
+  - "Decide" dirigirse hacia él
+  - Calcula la fuerza necesaria para llegar
+  - Ajusta su trayectoria continuamente
+
+**La diferencia clave**
+
+Las steering forces permiten que el agente tenga **intención** y **autonomía**, mientras que las fuerzas tradicionales son reacciones al entorno. Esta es la base para crear agentes que parezcan "vivos" e "inteligentes".
+
+</details>
+
+<details>
+<summary>3. Relación con Craig Reynolds</summary>
+
+**¿Quién es Craig Reynolds?**
+
+**Craig Reynolds** es un científico computacional e investigador pionero en el campo de:
+- Simulación de comportamiento animal
+- Gráficos por computadora
+- Vida artificial
+- Animación de personajes autónomos
+
+**Sus contribuciones fundamentales**
+
+**1. Boids (1986)**
+
+- **Qué es**: Algoritmo que simula bandadas de pájaros (bird-oid droids → boids)
+- **Innovación**: Demostró que comportamientos complejos de grupo emergen de **3 reglas simples**:
+  - **Separación**: Evitar chocar con vecinos
+  - **Alineación**: Ir en la misma dirección que vecinos
+  - **Cohesión**: Mantenerse cerca del grupo
+- **Impacto**: Primera demostración clara de comportamiento emergente en simulación
+
+**2. Steering Behaviors for Autonomous Characters (1999)**
+
+- **Qué es**: Formalización de un conjunto de comportamientos básicos de dirección
+- **Comportamientos definidos**:
+  - **Seek**: Ir hacia un objetivo
+  - **Flee**: Huir de un peligro
+  - **Arrival**: Llegar suavemente a un punto (desacelerando)
+  - **Pursue**: Perseguir un objetivo móvil (predecir su posición)
+  - **Evade**: Evadir una amenaza móvil
+  - **Wander**: Vagar aleatoriamente
+  - **Path following**: Seguir un camino
+  - **Obstacle avoidance**: Evitar obstáculos
+- **Legado**: Se convirtió en el estándar de la industria para IA de movimiento
+
+**3. Aplicaciones en la industria**
+
+**Cine y efectos visuales**:
+- Batman Returns (1992): Simulación de murciélagos y pingüinos
+- El Rey León: Simulación de estampidas de ñus
+- Innumerables películas modernas usan sus algoritmos
+
+**Videojuegos**:
+- NPCs (personajes no jugables) con movimiento realista
+- Simulación de multitudes
+- Bandadas, manadas, cardúmenes
+
+**Robótica**:
+- Drones que vuelan en formación
+- Robots autónomos que navegan evitando obstáculos
+- Vehículos autónomos
+
+**La conexión con Steering Forces**
+
+**Por qué es importante**:
+
+1. **Popularizó el concepto**: Reynolds demostró que agentes autónomos pueden tomar "decisiones" de movimiento que parecen inteligentes
+
+2. **Formalizó la técnica**: Antes de él, no existía un framework claro para programar comportamientos autónomos
+
+3. **Demostró la emergencia**: Con Boids, mostró que **autonomía + reglas simples = comportamiento emergente complejo**
+
+4. **Steering forces son el mecanismo**: Las steering forces son la implementación técnica que permite realizar todos los comportamientos que Reynolds definió
+
+**Cita clave de Reynolds**
+
+> "The individual behaviors are simple, but the aggregate motion is complex and realistic."
+
+(Los comportamientos individuales son simples, pero el movimiento agregado es complejo y realista)
+
+**Recursos adicionales**
+
+- [Sitio web de Craig Reynolds](http://www.red3d.com/cwr/)
+- [Paper original de Boids (1987)](http://www.red3d.com/cwr/boids/)
+- [Steering Behaviors (1999)](http://www.red3d.com/cwr/steer/)
+
+</details>
+
+<details>
+<summary>Referencias consultadas</summary>
+
+- The Nature of Code - Capítulo 5: Autonomous Agents
+- Craig Reynolds - Steering Behaviors For Autonomous Characters
+- Craig Reynolds - Boids Background and Update
+- Tyler Hobbs - Flow Fields Article
+
+</details>
 
 > [!NOTE]
 > 🧐🧪✍️ Reporta en tu bitácora
@@ -116,23 +257,958 @@ Steering:      ↑ (la fuerza que lo "jala" hacia arriba para corregir rumbo)
 #### Pasos:
 
 1. **Ejecuta el ejemplo:** ejecuta el código del ejemplo principal de Flow Fields de TNoC en p5.js. Observa el comportamiento de los vehículos/agentes.
+<details>
+<summary>📋 Paso 1: Ejecutar el ejemplo</summary>
+
+**Comportamiento observado**
+
+- **120 vehículos/agentes** representados como triángulos que siguen el campo de flujo
+- Los agentes se mueven de manera suave y orgánica siguiendo vectores invisibles
+- El movimiento es fluido y continuo, sin saltos bruscos
+- Los agentes atraviesan los bordes del canvas (wraparound)
+
+**Controles interactivos**
+
+- **Barra espaciadora**: Muestra/oculta las líneas de debug del campo de flujo (vectores visualizados como líneas)
+- **Click del mouse**: Genera un nuevo campo de flujo aleatorio usando Perlin noise
+
+**Observaciones**
+
+Cuando activo el modo debug(barra espaciadora) , puedo ver la cuadrícula de vectores que forman el campo de flujo. Los agentes responden inmediatamente a estos vectores, creando patrones de movimiento complejos a partir de reglas simples.
+
+</details>
 
 2. **Identifica la estructura del campo:** en el código (usualmente en una clase `FlowField`), localiza cómo se almacena el campo de flujo. ¿Qué estructura de datos se usa (ej: un array 2D)? ¿Qué representa cada elemento de esa estructura? ¿Cómo se calcula inicialmente el vector en cada punto?
+
+
+<details>
+<summary>🏗️ Paso 2: Identificar la estructura del campo</summary>
+
+**Estructura de datos utilizada**
+
+**Tipo**: Array bidimensional (2D) de vectores `p5.Vector`
+
+```javascript
+this.field = new Array(this.cols);
+for (let i = 0; i < this.cols; i++) {
+  this.field[i] = new Array(this.rows);
+}
+```
+
+**Dimensiones del campo**
+
+El campo se divide en una cuadrícula basada en la **resolución**:
+
+```javascript
+this.cols = width / this.resolution;  // Número de columnas
+this.rows = height / this.resolution;  // Número de filas
+```
+
+**Con los valores del ejemplo:**
+- Canvas: 640 × 240 píxeles
+- Resolución: 20 píxeles
+- Columnas: 640 / 20 = **32 columnas**
+- Filas: 240 / 20 = **12 filas**
+- Total de vectores: 32 × 12 = **384 vectores**
+
+**Qué representa cada elemento**
+
+Cada elemento `field[i][j]` es un **vector de dirección** (`p5.Vector`) que indica:
+- La dirección hacia la que deben moverse los agentes cuando pasan por esa celda
+- Es un vector unitario (magnitud 1) que luego se escala según la velocidad del agente
+
+**Cómo se calculan los vectores inicialmente**
+
+**Método utilizado**: Perlin Noise
+
+```javascript
+init() {
+  noiseSeed(random(10000));  // Semilla aleatoria para variación
+  let xoff = 0;
+  for (let i = 0; i < this.cols; i++) {
+    let yoff = 0;
+    for (let j = 0; j < this.rows; j++) {
+      // Perlin noise genera valor entre 0 y 1
+      let angle = map(noise(xoff, yoff), 0, 1, 0, TWO_PI);
+      // Convierte ángulo a vector unitario
+      this.field[i][j] = p5.Vector.fromAngle(angle);
+      yoff += 0.1;
+    }
+    xoff += 0.1;
+  }
+}
+```
+
+**Proceso paso a paso:**
+
+1. **Perlin Noise** (`noise(xoff, yoff)`): Genera valores suaves y continuos entre 0 y 1
+2. **Mapeo a ángulos**: Se mapea ese valor al rango [0, 2π] (0° a 360°)
+3. **Conversión a vector**: `p5.Vector.fromAngle()` crea un vector unitario apuntando en esa dirección
+4. **Incrementos pequeños** (0.1): Crean un campo suave donde vectores vecinos tienen direcciones similares
+
+**Ventaja de Perlin Noise**:
+- Genera campos de flujo orgánicos y naturales
+- Transiciones suaves entre celdas adyacentes
+- Evita cambios bruscos de dirección
+
+**Visualización conceptual**
+
+```
+Campo de flujo (vista simplificada):
+→ → ↗ ↑ ↑ ↖ ← ←
+→ ↗ ↗ ↑ ↖ ↖ ← ↙
+↘ → ↗ ↑ ↖ ← ↙ ↓
+↓ ↘ → → ← ↙ ↓ ↓
+```
+
+Cada flecha representa un vector en una celda de la cuadrícula.
+
+</details>
 
 3. **Analiza el comportamiento del agente:** en el código de la clase del vehículo/agente (`Vehicle`), encuentra la función `follow()`. Explica con tus palabras:
   - ¿Cómo determina el agente qué vector del campo de flujo debe seguir basándose en su posición actual? (pista: implica mapear la posición a índices de la cuadrícula).
   - Una vez que tiene el vector deseado del campo, ¿Cómo lo utiliza para calcular la fuerza de dirección (`steering force`)? (pista: implica calcular la diferencia con la velocidad actual y limitar la fuerza).
 
+<details>
+<summary>🚗 Paso 3: Analizar el comportamiento del agente</summary>
+
+**La función `follow()` del vehículo**
+
+```javascript
+follow(flow) {
+  // 1. Obtener el vector deseado del campo
+  let desired = flow.lookup(this.position);
+  // 2. Escalar a la velocidad máxima
+  desired.mult(this.maxspeed);
+  // 3. Calcular steering force
+  let steer = p5.Vector.sub(desired, this.velocity);
+  // 4. Limitar la fuerza máxima
+  steer.limit(this.maxforce);
+  // 5. Aplicar la fuerza
+  this.applyForce(steer);
+}
+```
+
+<ins><strong>Parte A: ¿Cómo determina qué vector seguir?</strong></ins>
+
+El agente usa la función `lookup()` del FlowField para mapear su posición al índice de la cuadrícula:
+
+```javascript
+lookup(position) {
+  // Divide posición por resolución para obtener índices
+  let column = constrain(floor(position.x / this.resolution), 0, this.cols - 1);
+  let row = constrain(floor(position.y / this.resolution), 0, this.rows - 1);
+  // Retorna copia del vector en esa celda
+  return this.field[column][row].copy();
+}
+```
+
+**Proceso de mapeo:**
+
+1. **Dividir posición por resolución**: Convierte coordenadas de píxeles a índices de cuadrícula
+2. **`floor()`**: Redondea hacia abajo para obtener índice entero
+3. **`constrain()`**: Asegura que no salga de los límites del array
+4. **`.copy()`**: Retorna una copia del vector (no el original)
+
+**Ejemplo numérico:**
+```
+Agente en posición (100, 80)
+Resolución = 20
+
+Cálculo:
+- column = floor(100 / 20) = floor(5) = 5
+- row = floor(80 / 20) = floor(4) = 4
+
+Resultado: field[5][4]
+```
+
+**Diagrama conceptual:**
+```
+Posición del agente (píxeles) → División por resolución → Índices de array
+      (100, 80)               →      (5.0, 4.0)         →    [5][4]
+```
+
+<ins><strong>Parte B: ¿Cómo calcula la steering force?</strong></ins>
+
+**Fórmula fundamental:**
+```
+steering_force = velocidad_deseada - velocidad_actual
+```
+
+**Implementación paso a paso:**
+
+```javascript
+// 1. Obtener vector deseado (unitario)
+let desired = flow.lookup(this.position);
+
+// 2. Escalar a velocidad máxima
+desired.mult(this.maxspeed);
+// Ahora 'desired' tiene la magnitud correcta
+
+// 3. Calcular diferencia con velocidad actual
+let steer = p5.Vector.sub(desired, this.velocity);
+// steer = hacia_dónde_quiero_ir - hacia_dónde_voy
+
+// 4. Limitar a fuerza máxima
+steer.limit(this.maxforce);
+// Impide giros instantáneos
+
+// 5. Aplicar como fuerza
+this.applyForce(steer);
+```
+
+**Ejemplo visual:**
+
+```
+Situación:
+  Vector del campo:      →  (apunta derecha)
+  Velocidad actual:      ↑  (va hacia arriba)
+  Velocidad deseada:     →  (quiere ir a derecha con maxspeed)
+
+Cálculo:
+  Steering force:        ↘  (fuerza que lo "jala" hacia la derecha)
+
+Resultado:
+  El agente GRADUALMENTE gira hacia la derecha
+  (no instantáneamente, gracias a maxforce)
+```
+
+**¿Por qué es importante limitar la fuerza?**
+
+- Sin `limit(maxforce)`: El agente giraría instantáneamente → movimiento robótico
+- Con `limit(maxforce)`: Giros suaves y naturales → movimiento orgánico
+
+**Analogía del mundo real:**
+Es como un auto que no puede girar 90° instantáneamente. Debe reducir velocidad y girar gradualmente según su "capacidad de maniobra" (maxforce).
+
+**Flujo completo del movimiento**
+
+```
+1. Agente en posición (x, y)
+2. lookup() → obtiene vector del campo en esa posición
+3. Escala vector a maxspeed → velocidad deseada
+4. Calcula steering = deseada - actual
+5. Limita steering a maxforce
+6. Aplica steering como fuerza
+7. Actualiza aceleración
+8. Actualiza velocidad (limitada a maxspeed)
+9. Actualiza posición
+10. Repite en siguiente frame
+```
+
+**Observación clave**
+
+El agente NO salta directamente a seguir el vector del campo. En su lugar:
+- **Percibe** el vector (lookup)
+- **Desea** moverse en esa dirección (desired)
+- **Calcula** la fuerza necesaria (steering)
+- **Aplica gradualmente** esa fuerza (limitada por maxforce)
+
+Esto crea movimiento autónomo e inteligente, no simplemente seguir un path predefinido.
+
+</details>
+
 4. Identifica parámetros clave: localiza en el código las variables que controlan aspectos importantes como:
 
    - La resolución del campo de flujo (el tamaño de las celdas de la cuadrícula).
    - La velocidad máxima (`maxspeed`) y la fuerza máxima (`maxforce`) de los agentes.
-  
+
+
+<details>
+<summary>🎛️ Paso 4: Identificar parámetros clave</summary>
+
+**Parámetros identificados**
+
+| Parámetro | Valor actual | Ubicación | Efecto |
+|-----------|--------------|-----------|--------|
+| **resolution** | 20 | sketch.js:23 | Tamaño de celdas del campo |
+| **maxspeed** | 2-5 (random) | sketch.js:27 | Velocidad del agente |
+| **maxforce** | 0.1-0.5 (random) | sketch.js:27 | Capacidad de maniobra |
+| **noise increment** | 0.1 | flowfield.js:32,34 | Suavidad del campo |
+| **num vehicles** | 120 | sketch.js:25 | Cantidad de agentes |
+
+<ins><strong>1. Resolución del campo de flujo</strong></ins>
+
+**Ubicación en el código:**
+```javascript
+// En sketch.js, línea 23
+flowfield = new FlowField(20);
+```
+
+**Qué controla:**
+- El tamaño de cada celda de la cuadrícula
+- Cuántos vectores componen el campo
+
+**Efecto de diferentes valores:**
+
+| Resolución | Columnas | Filas | Total vectores | Efecto visual |
+|------------|----------|-------|----------------|---------------|
+| 5 | 128 | 48 | 6144 | Muy detallado, campo complejo |
+| 10 | 64 | 24 | 1536 | Detallado |
+| 20 | 32 | 12 | 384 | Balance (valor actual) |
+| 40 | 16 | 6 | 96 | Grueso, cambios bruscos |
+| 60 | 10.6 | 4 | 42 | Muy grueso, poco detalle |
+
+**Impacto en el comportamiento:**
+- **Resolución baja** (5-10): Campo muy detallado, agentes siguen curvas complejas
+- **Resolución alta** (40-60): Campo grueso, agentes hacen movimientos más amplios
+
+<ins><strong>2. Velocidad máxima (maxspeed)</strong></ins>
+
+**Ubicación en el código:**
+```javascript
+// En sketch.js, línea 27
+new Vehicle(random(width), random(height), random(2, 5), random(0.1, 0.5))
+//                                          ^^^^^^^^^^^^
+//                                          maxspeed entre 2 y 5
+```
+
+**Qué controla:**
+- Qué tan rápido puede moverse el agente
+- La magnitud máxima del vector velocidad
+
+**Relación con el código:**
+```javascript
+// En vehicle.js
+this.velocity.limit(this.maxspeed);
+```
+
+**Efecto de diferentes valores:**
+
+| maxspeed | Comportamiento |
+|----------|----------------|
+| 0.5 - 1 | Muy lento, movimiento contemplativo |
+| 2 - 5 | Balance, movimiento natural (actual) |
+| 10 - 15 | Rápido, enérgico |
+| 20+ | Muy rápido, puede verse caótico |
+
+<ins><strong>3. Fuerza máxima (maxforce)</strong></ins>
+
+**Ubicación en el código:**
+```javascript
+// En sketch.js, línea 27
+new Vehicle(random(width), random(height), random(2, 5), random(0.1, 0.5))
+//                                                        ^^^^^^^^^^^^^^^^^
+//                                                        maxforce entre 0.1 y 0.5
+```
+
+**Qué controla:**
+- Qué tan rápido puede cambiar de dirección
+- La "capacidad de maniobra" del agente
+- La magnitud máxima de la steering force
+
+**Relación con el código:**
+```javascript
+// En vehicle.js
+steer.limit(this.maxforce);
+```
+
+**Efecto de diferentes valores:**
+
+| maxforce | Comportamiento |
+|----------|----------------|
+| 0.01 - 0.05 | Giros muy lentos, inercia alta, movimiento "pesado" |
+| 0.1 - 0.5 | Giros naturales (actual) |
+| 1 - 2 | Muy maniobrable, giros cerrados |
+| 5+ | Giros casi instantáneos, puede verse antinatural |
+
+<ins><strong>4. Incremento de Perlin Noise</strong></ins>
+
+**Ubicación en el código:**
+```javascript
+// En flowfield.js, líneas 32-34
+yoff += 0.1;
+xoff += 0.1;
+```
+
+**Qué controla:**
+- Qué tan rápido cambia el Perlin noise entre celdas adyacentes
+- La "suavidad" del campo de flujo
+
+**Efecto de diferentes valores:**
+
+| Incremento | Efecto en el campo |
+|------------|-------------------|
+| 0.01 | Muy suave, casi uniforme |
+| 0.1 | Suave con variación (actual) |
+| 0.5 | Cambios frecuentes |
+| 1.0+ | Caótico, direcciones muy diferentes entre celdas |
+
+<ins><strong></strong></ins>5. Número de vehículos
+
+**Ubicación en el código:**
+```javascript
+// En sketch.js, línea 25
+for (let i = 0; i < 120; i++) {
+```
+
+**Qué controla:**
+- Cuántos agentes existen en la simulación
+
+**Consideraciones:**
+- Más agentes = visualización más densa del campo
+- Afecta rendimiento computacional
+
+**Relación entre parámetros**
+
+**maxspeed vs maxforce:**
+```
+Alto maxspeed + Bajo maxforce = Rápido pero torpe (difícil de girar)
+Bajo maxspeed + Alto maxforce = Lento pero ágil (gira fácilmente)
+Alto maxspeed + Alto maxforce = Rápido y ágil (muy responsivo)
+Bajo maxspeed + Bajo maxforce = Lento y torpe (movimiento "pesado")
+```
+
+**resolución vs incremento noise:**
+```
+Baja resolución + Alto incremento = Movimiento caótico
+Alta resolución + Bajo incremento = Movimiento muy suave pero computacionalmente costoso
+```
+
+
+</details>
+
+
 5. Experimenta con modificaciones: realiza al menos una de las siguientes modificaciones en el código, ejecuta y describe el efecto observado en el comportamiento de los agentes:
    - Cambia significativamente la forma en que se generan los vectores del campo (ej: usa una fórmula matemática diferente en lugar de noise(), o cambia drásticamente los parámetros de noise()).
    - Modifica sustancialmente la resolución del campo de flujo (hazla mucho más fina o mucho más gruesa).
    - Altera considerablemente maxspeed o maxforce de los agentes.
   
+
+<details>
+<summary>🧪 Paso 5: Experimentación con modificaciones</summary>
+
+<details>
+  <summary>🧪 Modificación: Cambiar generación de vectores del campo</summary>
+
+He implementado **4 modos diferentes** de generación de vectores, que se pueden cambiar presionando la tecla **'C'**:
+
+**Modo 0: Perlin Noise (Original)**
+```javascript
+let angle = map(noise(xoff, yoff), 0, 1, 0, TWO_PI);
+```
+
+**Comportamiento observado:**
+- Movimiento orgánico y natural
+- Patrones fluidos y continuos
+- Los agentes forman "ríos" de movimiento
+- Cada regeneración (click) crea un patrón completamente diferente
+
+**Características:**
+- Campo más natural y menos predecible
+- Excelente para simular flujos naturales (viento, agua, etc.)
+- Variación aleatoria controlada
+
+---
+
+**Modo 1: Espiral**
+```javascript
+let angle = atan2(j - this.rows/2, i - this.cols/2) + PI/4;
+```
+
+**Comportamiento observado:**
+- Los agentes forman un patrón de **espiral** girando alrededor del centro del canvas
+- Movimiento rotacional constante en sentido horario
+- Todos los agentes convergen hacia un flujo circular
+- Patrón muy predecible y simétrico
+
+**Efecto visual:**
+- Remolino o vórtice
+- Movimiento hipnótico y ordenado
+- Similar a agua drenando por un desagüe
+
+**Aplicaciones:**
+- Simular tornados o remolinos
+- Efectos de agujero negro
+- Patrones decorativos circulares
+
+---
+
+**Modo 2: Patrón de Ondas**
+```javascript
+let angle = sin(i * 0.2) * cos(j * 0.2) * TWO_PI;
+```
+
+**Comportamiento observado:**
+- Los agentes siguen patrones de **ondas sinusoidales**
+- Movimiento ondulante, como olas en el mar
+- Crea áreas de movimiento caótico intercaladas con áreas organizadas
+- Patrones geométricos repetitivos
+
+**Efecto visual:**
+- Movimiento serpenteante
+- Zonas de convergencia y divergencia
+- Sensación de vibración o pulsación
+
+**Características:**
+- Combina seno y coseno para crear interferencia
+- Patrones más complejos y matemáticamente definidos
+- Movimiento menos natural pero visualmente interesante
+
+**Aplicaciones:**
+- Arte generativo con patrones geométricos
+- Simular ondas electromagnéticas
+- Efectos visuales abstractos
+
+---
+
+**Modo 3: Circular**
+```javascript
+let angle = atan2(j - this.rows/2, i - this.cols/2);
+```
+
+**Comportamiento observado:**
+- Los agentes se mueven en **círculos concéntricos** alrededor del centro
+- Movimiento rotacional puro sin offset
+- Similar al modo espiral pero sin el componente que los hace espiralar hacia adentro
+- Orbitan alrededor del punto central
+
+**Efecto visual:**
+- Órbitas circulares perfectas
+- Movimiento planetario
+- Muy simétrico y ordenado
+
+**Diferencia con modo espiral:**
+- Espiral: `+ PI/4` hace que también se muevan hacia el centro
+- Circular: Solo rotan sin acercarse o alejarse del centro
+
+**Aplicaciones:**
+- Simular órbitas planetarias
+- Efectos de campo magnético
+- Visualizaciones de fuerzas centrípetas
+
+---
+
+**Comparación entre modos**
+
+| Modo | Predecibilidad | Naturalidad | Complejidad visual | Aplicación ideal |
+|------|----------------|-------------|-------------------|------------------|
+| **Noise** | Baja | Alta | Media | Flujos naturales |
+| **Espiral** | Alta | Media | Media | Vórtices, remolinos |
+| **Ondas** | Media | Baja | Alta | Arte generativo |
+| **Circular** | Alta | Baja | Baja | Órbitas, campos |
+
+**Código implementado**
+
+He modificado el archivo `flowfield.js` para incluir:
+
+1. **Propiedad de modo** en el constructor
+2. **Switch statement** en `init()` para seleccionar entre modos
+3. **Función `changeMode()`** para ciclar entre modos
+4. **Función `getModeName()`** para mostrar el modo actual
+
+Y en `sketch.js`:
+- Agregué detección de tecla 'C' para cambiar modos
+- Mostrar el nombre del modo actual en pantalla
+
+**Fragmento de código clave:**
+```javascript
+// En flowfield.js
+switch(this.mode) {
+  case 0: // Perlin Noise (original)
+    angle = map(noise(xoff, yoff), 0, 1, 0, TWO_PI);
+    break;
+  case 1: // Espiral
+    angle = atan2(j - this.rows/2, i - this.cols/2) + PI/4;
+    break;
+  case 2: // Patrón de ondas
+    angle = sin(i * 0.2) * cos(j * 0.2) * TWO_PI;
+    break;
+  case 3: // Circular
+    angle = atan2(j - this.rows/2, i - this.cols/2);
+    break;
+}
+```
+
+**Impacto en el comportamiento colectivo**
+
+**Observación general:**
+El cambio en la generación de vectores tiene un **impacto dramático** en el comportamiento colectivo:
+
+- **Noise**: Comportamiento emergente impredecible → agentes parecen explorar
+- **Espiral/Circular**: Comportamiento emergente predecible → agentes parecen seguir reglas estrictas
+- **Ondas**: Comportamiento emergente caótico → agentes parecen desorientados en algunas zonas
+
+Esto demuestra el principio clave de la unidad: **reglas simples → comportamientos complejos**.
+
+</details>
+
+
+<details>
+<summary>🧪 Modificación: Cambiar resolución del campo (Mención)</summary>
+
+**Experimentación con resolución**
+
+He probado diferentes valores de resolución para entender su impacto en el comportamiento del sistema.
+
+**Valores probados**
+
+**Resolución muy baja (5)**
+```javascript
+flowfield = new FlowField(5);
+```
+
+**Resultado:**
+- El sistema se **lagea considerablemente**
+- Se crean **6,144 vectores** (128 × 48)
+- Los agentes responden a cambios muy sutiles en el campo
+- Movimiento extremadamente detallado pero costoso computacionalmente
+
+**Por qué lagea:**
+- Demasiados vectores para calcular y procesar
+- Mayor carga en `lookup()` y `show()`
+- El navegador debe renderizar muchas más líneas en modo debug
+
+**Resolución muy alta (>40)**
+```javascript
+flowfield = new FlowField(50);
+```
+
+**Resultado:**
+- Funciona bien en términos de rendimiento
+- Solo **85 vectores** (12.8 × 4.8)
+- Los agentes hacen movimientos muy amplios y bruscos
+- Se pierde la suavidad del movimiento
+
+**Efecto visual:**
+- Los agentes parecen "saltar" entre zonas
+- Menor densidad de información direccional
+- Patrones menos interesantes
+
+**Conclusión sobre la resolución**
+
+**Valor óptimo: 15-25**
+- Balance entre detalle visual y rendimiento
+- Movimiento suave sin sacrificar rendimiento
+- Suficientes vectores para patrones interesantes
+
+**¿Por qué es importante el diseño de resolución?**
+
+**Consideraciones de diseño:**
+
+1. **Rendimiento**: Más resolución = más cálculos = más lag
+2. **Estética**: Debe haber suficientes vectores para crear patrones fluidos
+3. **Comportamiento**: Resolución muy baja crea movimiento "pixelado"
+4. **Hardware**: Depende del dispositivo donde se ejecuta
+
+**Aplicación práctica:**
+- Móviles: Resolución 25-40 (menos potentes)
+- Desktop: Resolución 10-20 (más potentes)
+- Proyecciones/instalaciones: Resolución ajustable según dimensiones
+
+**Recomendación**
+
+Mantener resolución en **20** como está en el ejemplo original es una excelente elección porque:
+- ✅ Buen balance rendimiento/calidad
+- ✅ Patrones visualmente interesantes
+- ✅ Funciona en la mayoría de dispositivos
+- ✅ Suficiente detalle sin complejidad excesiva
+
+</details>
+
+
+<details>
+<summary>🧪 Modificación: Alterar maxspeed y maxforce</summary>
+
+Experimentación con velocidad y fuerza
+
+He creado diferentes configuraciones para entender cómo `maxspeed` y `maxforce` afectan el comportamiento de los agentes.
+
+**Experimento 1: Agentes muy rápidos y maniobrables**
+
+**Código modificado:**
+```javascript
+// En sketch.js, línea 27
+new Vehicle(random(width), random(height), 10, 2)
+//                                          ^^  ^
+//                                          |   maxforce = 2
+//                                          maxspeed = 10
+```
+
+**Comportamiento observado:**
+- Los agentes se mueven **muy rápidamente** por el canvas
+- Hacen **giros cerrados** sin perder velocidad
+- Responden casi instantáneamente a cambios en el campo de flujo
+- Movimiento enérgico y dinámico
+
+**Efecto visual:**
+- Parece una bandada de pájaros en vuelo rápido
+- Mucha actividad y energía en el canvas
+- Difícil seguir agentes individuales con la vista
+
+**Características:**
+- Alta responsividad al campo
+- Sensación de urgencia o pánico
+- Movimiento "deportivo" o acrobático
+
+**Aplicaciones:**
+- Simular pájaros asustados
+- Efectos de energía o electricidad
+- Partículas en explosión controlada
+
+---
+
+**Experimento 2: Agentes muy lentos y torpes**
+
+**Código modificado:**
+```javascript
+// En sketch.js, línea 27
+new Vehicle(random(width), random(height), 1, 0.01)
+//                                          ^  ^^^^
+//                                          |  maxforce = 0.01
+//                                          maxspeed = 1
+```
+
+**Comportamiento observado:**
+- Los agentes se mueven **muy lentamente**
+- Hacen **giros amplios y lentos** - no pueden cambiar dirección rápidamente
+- Tienen mucha **inercia** - resisten cambios de dirección
+- Movimiento pesado y contemplativo
+
+**Efecto visual:**
+- Parece una corriente lenta de lava o miel
+- Movimiento "submarino" o en cámara lenta
+- Fácil seguir agentes individuales
+- Sensación de peso y masa
+
+**Características:**
+- Baja responsividad al campo
+- Gran inercia y momentum
+- Movimiento elegante y fluido
+
+**Aplicaciones:**
+- Simular fluidos densos (lava, miel)
+- Criaturas gigantes o pesadas
+- Efectos de cámara lenta
+- Ambiente onírico o meditativo
+
+---
+
+**Experimento 3: Rápidos pero torpes**
+
+**Código modificado:**
+```javascript
+// En sketch.js, línea 27
+new Vehicle(random(width), random(height), 8, 0.05)
+//                                          ^  ^^^^
+//                                          |  maxforce = 0.05 (muy bajo)
+//                                          maxspeed = 8 (alto)
+```
+
+**Comportamiento observado:**
+- Los agentes van **rápido** pero **no pueden girar bien**
+- Hacen **curvas muy amplias**
+- A menudo "se pasan" de la dirección deseada
+- Movimiento errático e impreciso
+
+**Efecto visual:**
+- Como patinadores en hielo sin control
+- Movimiento "resbaloso"
+- Trayectorias que sobrepasan el objetivo
+- Sensación de dificultad para controlar
+
+**Analogía del mundo real:**
+- Auto deportivo en pista de hielo
+- Cohete sin buen sistema de dirección
+
+---
+
+**Experimento 4: Lentos pero ágiles**
+
+**Código modificado:**
+```javascript
+// En sketch.js, línea 27
+new Vehicle(random(width), random(height), 2, 1.5)
+//                                          ^  ^^^
+//                                          |  maxforce = 1.5 (alto)
+//                                          maxspeed = 2 (bajo)
+```
+
+**Comportamiento observado:**
+- Los agentes van **lento** pero pueden **girar en cualquier dirección fácilmente**
+- Hacen **giros cerrados** inmediatos
+- Movimiento muy preciso y controlado
+- Siguen el campo de flujo con exactitud
+
+**Efecto visual:**
+- Como un robot de precisión
+- Movimiento "inteligente" y deliberado
+- Cambios de dirección casi instantáneos
+- Muy responsivo pero calmado
+
+**Analogía del mundo real:**
+- Drone de precisión
+- Pez pequeño en agua tranquila
+
+---
+
+**Análisis comparativo**
+
+| Config | maxspeed | maxforce | Sensación | Mejor uso |
+|--------|----------|----------|-----------|-----------|
+| **Original** | 2-5 | 0.1-0.5 | Natural, equilibrado | Bandadas de pájaros |
+| **Experimento 1** | 10 | 2 | Frenético, deportivo | Pájaros asustados, energía |
+| **Experimento 2** | 1 | 0.01 | Pesado, lento | Fluidos densos, gigantes |
+| **Experimento 3** | 8 | 0.05 | Resbaloso, errático | Patinaje, falta de control |
+| **Experimento 4** | 2 | 1.5 | Preciso, robótico | Drones, precisión |
+
+**Relación maxspeed vs maxforce**
+
+**Fórmula conceptual:**
+```
+Agilidad = maxforce / maxspeed
+
+Agilidad alta: Puede girar fácilmente relativo a su velocidad
+Agilidad baja: Difícil girar relativo a su velocidad
+```
+
+**Ejemplos:**
+- `maxspeed=10, maxforce=2`: Agilidad = 0.2 (moderada)
+- `maxspeed=1, maxforce=0.01`: Agilidad = 0.01 (muy baja)
+- `maxspeed=2, maxforce=1.5`: Agilidad = 0.75 (muy alta)
+
+**Impacto en el comportamiento colectivo**
+
+**Observación general:**
+
+1. **Alta velocidad + Alta fuerza**:
+   - Comportamiento colectivo caótico pero cohesivo
+   - Forman remolinos rápidos
+   - Alta densidad de actividad
+
+2. **Baja velocidad + Baja fuerza**:
+   - Comportamiento colectivo lento y disperso
+   - Forman "ríos" amplios
+   - Baja densidad de actividad
+
+3. **Desbalance (alta velocidad, baja fuerza)**:
+   - Comportamiento colectivo desorganizado
+   - Agentes se "pierden" del flujo
+   - Patrones erráticos
+
+4. **Balance (moderada velocidad, moderada fuerza)**:
+   - Comportamiento colectivo armonioso
+   - Patrones emergentes claros
+   - Visualmente más atractivo
+
+**Código recomendado para diferentes efectos**
+
+**Para energía y caos:**
+```javascript
+new Vehicle(random(width), random(height), 12, 3)
+```
+
+**Para calma y fluidez:**
+```javascript
+new Vehicle(random(width), random(height), 1.5, 0.05)
+```
+
+**Para balance natural (original):**
+```javascript
+new Vehicle(random(width), random(height), random(2, 5), random(0.1, 0.5))
+```
+
+**Conclusión**
+
+Los parámetros `maxspeed` y `maxforce` son fundamentales para el "carácter" de los agentes:
+- **maxspeed**: Define la "energía" del sistema
+- **maxforce**: Define la "inteligencia" o capacidad de respuesta
+- **Su relación**: Define la "personalidad" del movimiento
+
+Esta experimentación demuestra que el mismo algoritmo puede generar comportamientos totalmente diferentes simplemente ajustando dos parámetros numéricos.
+
+</details>
+
+
+</details>
+
+[Ver en vivo en p5js](https://editor.p5js.org/DanieLudens/sketches/Um319xIwj)
+
+<details>
+<summary>🔗 Código de experimentación modificado</summary>
+
+**Archivos modificados a partir del original**
+
+He realizado modificaciones en dos archivos principales para implementar las experimentaciones:
+
+**1. flowfield.js**
+
+**Cambios realizados:**
+- Agregada propiedad `mode` para controlar el tipo de generación
+- Modificada función `init()` con switch statement para múltiples modos
+- Agregada función `changeMode()` para ciclar entre modos
+- Agregada función `getModeName()` para obtener nombre del modo actual
+
+**Código clave agregado:**
+```javascript
+// Constructor
+this.mode = 0; // 0=noise, 1=espiral, 2=ondas, 3=circular
+
+// En init()
+switch(this.mode) {
+  case 0: // Perlin Noise (original)
+    angle = map(noise(xoff, yoff), 0, 1, 0, TWO_PI);
+    break;
+  case 1: // Espiral
+    angle = atan2(j - this.rows/2, i - this.cols/2) + PI/4;
+    break;
+  case 2: // Patrón de ondas
+    angle = sin(i * 0.2) * cos(j * 0.2) * TWO_PI;
+    break;
+  case 3: // Circular
+    angle = atan2(j - this.rows/2, i - this.cols/2);
+    break;
+}
+
+// Funciones nuevas
+changeMode() {
+  this.mode = (this.mode + 1) % 4;
+  this.init();
+}
+
+getModeName() {
+  const modes = ['Perlin Noise', 'Espiral', 'Patrón de Ondas', 'Circular'];
+  return modes[this.mode];
+}
+```
+
+**2. sketch.js**
+
+**Cambios realizados:**
+- Actualizado texto de instrucciones para incluir tecla 'C'
+- Agregado manejo de tecla 'C' en `keyPressed()`
+- Agregado display del modo actual en el canvas
+
+**Código clave agregado:**
+```javascript
+// En setup()
+let text = createP(
+  "Hit space bar to toggle debugging lines.<br>" +
+  "Click the mouse to generate a new flow field.<br>" +
+  "Press 'C' to change flow field mode."
+);
+
+// En draw()
+fill(0);
+noStroke();
+textAlign(LEFT);
+textSize(14);
+text('Modo: ' + flowfield.getModeName(), 10, 20);
+
+// En keyPressed()
+if (key == "c" || key == "C") {
+  flowfield.changeMode();
+}
+```
+
+**Instrucciones de uso**
+
+**Controles del sketch:**
+- **Barra espaciadora**: Toggle debug lines (mostrar/ocultar vectores)
+- **Click mouse**: Regenerar campo de flujo (solo afecta modo Perlin Noise)
+- **Tecla 'C'**: Cambiar entre modos (Noise → Espiral → Ondas → Circular → Noise...)
+
+</details>
 
 > [!NOTE]
 > 🧐🧪✍️ Reporta en tu bitácora
