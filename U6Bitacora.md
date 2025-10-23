@@ -1565,6 +1565,193 @@ Esto demuestra el **comportamiento emergente**: propiedades del sistema que no e
    - Los pesos o multiplicadores que determinan la influencia relativa de cada una de las tres reglas al combinarlas.
    - La velocidad máxima (`maxspeed`) y la fuerza máxima (`maxforce`) de los agentes (similar a Flow Fields).
 
+
+<details>
+<summary>🎛️ Paso 4: Identificar parámetros clave</summary>
+
+
+**Parámetros clave**
+
+| Parámetro | Valor actual | Ubicación | Efecto principal |
+|-----------|--------------|-----------|------------------|
+| **desiredSeparation** | 25 | boid.js:96 | Espacio personal entre boids |
+| **neighborDistance** | 50 | boid.js:131, 156 | Radio de percepción social |
+| **Peso Separación** | 1.5 | boid.js:36 | Prioridad de evitar colisiones |
+| **Peso Alineación** | 1.0 | boid.js:37 | Prioridad de sincronizar dirección |
+| **Peso Cohesión** | 1.0 | boid.js:38 | Prioridad de mantenerse en grupo |
+| **maxspeed** | 3 | boid.js:14 | Velocidad máxima |
+| **maxforce** | 0.05 | boid.js:15 | Capacidad de maniobra |
+| **num boids** | 120 | sketch.js:17 | Cantidad de agentes |
+
+---
+
+**1. Radio de percepción (Perception Radius)**
+
+Los boids tienen diferentes radios de percepción para diferentes comportamientos:
+
+**Para Separación:**
+
+**Ubicación**: boid.js:96
+```javascript
+let desiredSeparation = 25; // píxeles
+```
+- **Qué define**: Quiénes son vecinos "demasiado cercanos"
+- **Efecto**: Qué tan apretado o espaciado está el grupo
+- **Más pequeño** (10-15): Boids pueden estar muy juntos, casi tocándose
+- **Más grande** (50+): Boids mantienen mucha distancia, grupos dispersos
+
+**Para Alineación y Cohesión:**
+
+**Ubicación**: boid.js:131 y boid.js:156
+```javascript
+let neighborDistance = 50; // píxeles
+```
+- **Qué define**: Quiénes son vecinos "cercanos" para alinearse y cohesionarse
+- **Efecto**: Qué tan "consciente" es cada boid del grupo
+- **Más pequeño** (20-30): Solo responde a vecinos inmediatos, grupos fragmentados
+- **Más grande** (100+): Responde a muchos boids, comportamiento muy cohesivo
+
+**Nota importante**: En este ejemplo, `desiredSeparation` y `neighborDistance` son constantes locales en cada función. Para experimentar fácilmente, se podrían hacer propiedades de la clase.
+
+---
+
+**2. Pesos de las reglas (Rule Weights)**
+
+**Ubicación**: boid.js:36-38
+```javascript
+sep.mult(1.5);  // Peso de Separación
+ali.mult(1.0);  // Peso de Alineación
+coh.mult(1.0);  // Peso de Cohesión
+```
+
+**Qué controlan**: La influencia relativa de cada regla en el comportamiento final
+
+**Valores actuales**:
+- Separación: **1.5** (más importante)
+- Alineación: **1.0** (importancia media)
+- Cohesión: **1.0** (importancia media)
+
+**Interpretación**: La separación tiene 50% más influencia que las otras reglas, lo que significa que evitar colisiones es prioritario.
+
+**Efectos de diferentes configuraciones**:
+
+| Separación | Alineación | Cohesión | Comportamiento resultante |
+|------------|------------|----------|---------------------------|
+| **1.5** | **1.0** | **1.0** | Balance (actual) - grupos cohesivos con buen espacio |
+| 3.0 | 1.0 | 1.0 | Muy disperso - boids se evitan mucho |
+| 0.1 | 1.0 | 1.0 | Amontonamiento - boids se chocan |
+| 1.0 | 3.0 | 1.0 | Muy sincronizado - todos van juntos en línea |
+| 1.0 | 0.1 | 1.0 | Caótico - grupo compacto pero sin dirección clara |
+| 1.0 | 1.0 | 3.0 | Muy compacto - grupo apretado hacia el centro |
+| 1.0 | 1.0 | 0.1 | Muy disperso - boids se alejan del grupo |
+
+---
+
+**3. Velocidad máxima (maxspeed)**
+
+**Ubicación**: boid.js:14
+
+```javascript
+this.maxspeed = 3; // píxeles por frame
+```
+
+**Qué controla**: Qué tan rápido puede moverse cada boid
+
+**Efecto**:
+- **Valor bajo** (1-2): Movimiento lento y contemplativo, fácil de observar
+- **Valor actual** (3): Balance entre velocidad y suavidad
+- **Valor alto** (8-10): Movimiento rápido y enérgico, difícil de seguir
+
+**Relación con el código**:
+```javascript
+// En boid.js:50
+this.velocity.limit(this.maxspeed);
+```
+
+---
+
+**4. Fuerza máxima (maxforce)**
+
+**Ubicación**: boid.js:15
+
+```javascript
+this.maxforce = 0.05; // aceleración máxima
+```
+
+**Qué controla**: Qué tan rápido puede cambiar de dirección (capacidad de maniobra)
+
+**Efecto**:
+- **Valor bajo** (0.01-0.03): Giros lentos, movimiento con inercia, más "realista"
+- **Valor actual** (0.05): Buen balance
+- **Valor alto** (0.2-0.5): Giros bruscos, movimiento "nervioso"
+
+**Relación con el código**:
+```javascript
+// Usado en múltiples lugares, ej: boid.js:123
+steer.limit(this.maxforce);
+```
+
+---
+
+**5. Número de boids**
+
+**Ubicación**: sketch.js:17
+
+```javascript
+for (let i = 0; i < 120; i++) {
+```
+
+**Qué controla**: Cuántos agentes hay en el sistema
+
+**Efectos**:
+
+| Cantidad | Comportamiento | Rendimiento |
+|----------|----------------|-------------|
+| 10-30 | Grupos pequeños, mucha libertad individual | Excelente |
+| 50-150 | Comportamiento de bandada claro (actual: 120) | Bueno |
+| 200-500 | Súper bandadas densas y complejas | Regular |
+| 1000+ | Comportamiento masivo pero puede lagear | Malo |
+
+**Consideración**: Cada boid compara su posición con TODOS los demás boids, por lo que la complejidad es O(n²). Muchos boids = mucho cálculo.
+
+---
+
+**6. Tamaño del boid (r)**
+
+**Ubicación**: boid.js:13
+
+```javascript
+this.r = 3.0; // radio del triángulo
+```
+
+**Qué controla**: Tamaño visual del boid
+
+**Efecto**:
+- Solo visual, no afecta la física
+- Boids más grandes son más fáciles de ver individualmente
+- Boids más pequeños crean efecto de "enjambre" más denso visualmente
+
+---
+
+**Relaciones importantes entre parámetros**
+
+**Radio de percepción vs Número de boids**:
+- Radio grande + Muchos boids = Cada boid responde a muchos vecinos → comportamiento muy cohesivo
+- Radio pequeño + Muchos boids = Cada boid responde a pocos vecinos → grupos fragmentados
+
+**Separación vs Cohesión**:
+- Separación > Cohesión = Grupos dispersos
+- Cohesión > Separación = Grupos apretados (pueden colisionar)
+- Balance = Distancia óptima
+
+**maxspeed vs maxforce**:
+- Como en Flow Fields, la relación determina la "agilidad"
+- Alto maxspeed + Bajo maxforce = Movimiento con mucha inercia
+- Bajo maxspeed + Alto maxforce = Movimiento preciso y respondiente
+
+</details>
+
+
 5. **Experimenta con modificaciones:** realiza al menos **una** de las siguientes modificaciones en el código, ejecuta y describe el efecto observado en el comportamiento colectivo del enjambre:
 
    - Cambia drásticamente el peso de una de las reglas (ej: pon la cohesión a cero, o la separación muy alta).
@@ -1579,6 +1766,205 @@ Esto demuestra el **comportamiento emergente**: propiedades del sistema que no e
 > 3. Describe la modificación que realizaste al código y **explica detalladamente el efecto** que tuvo en el comportamiento colectivo del enjambre (¿Se dispersan? ¿Forman grupos compactos? ¿se mueven caóticamente?). Incluye una captura de pantalla o GIF si ilustra bien el cambio. Muestra el fragmento de código modificado.
 
 
+<details>
+<summary>🧪 Paso 5: Experimentación con modificaciones</summary>
+
+Cambiar peso de las reglas para observar cómo afectan el comportamiento colectivo del enjambre.
+
+---
+
+**Experimento 1: Separación muy alta**
+
+**Código modificado** en boid.js:36-38:
+```javascript
+sep.mult(5.0);  // Separación MUY alta
+ali.mult(1.0);
+coh.mult(1.0);
+```
+
+**Comportamiento observado**:
+- Los boids se **dispersan** significativamente
+- Mantienen mucha distancia entre sí
+- Los grupos se **fragmentan** en mini bandadas
+- Movimiento menos cohesivo, más individualista
+- Algunos boids quedan "solos" vagando
+
+**Efecto visual**:
+- Parece una nube de partículas expandiéndose
+- Rara vez forman grupos densos
+- Más espacio blanco entre boids
+
+**Interpretación**:
+Al priorizar fuertemente la separación, cada boid "valora más" su espacio personal que mantenerse cerca del grupo. Es como personas que son muy introvertidas - prefieren la distancia.
+
+**Aplicaciones potenciales**:
+- Simular partículas que se repelen (electrones)
+- Movimiento de individuos en espacios abiertos
+- Comportamiento territorial de animales
+
+---
+
+**Experimento 2: Cohesión muy alta**
+
+**Código modificado**:
+```javascript
+sep.mult(1.5);
+ali.mult(1.0);
+coh.mult(5.0);  // Cohesión MUY alta
+```
+
+**Comportamiento observado**:
+- Los boids forman **grupos extremadamente compactos**
+- Se "amontonan" en el centro del grupo
+- El grupo actúa como una **masa unificada**
+- A veces se producen pequeñas colisiones visuales
+- Movimiento más lento debido a la congestión
+
+**Efecto visual**:
+- Parece una gota de tinta moviéndose
+- Masa densa y oscura de boids
+- Difícil distinguir individuos
+
+**Interpretación**:
+Al priorizar fuertemente la cohesión, cada boid "necesita" estar cerca del centro del grupo. Es como un grupo de personas en pánico apiñándose.
+
+**Aplicaciones potenciales**:
+- Simular multitudes en pánico
+- Comportamiento de enjambres de insectos muy densos
+- Células agrupándose
+
+---
+
+**Experimento 3: Alineación muy alta**
+
+**Código modificado**:
+```javascript
+sep.mult(1.5);
+ali.mult(5.0);  // Alineación MUY alta
+coh.mult(1.0);
+```
+
+**Comportamiento observado**:
+- Los boids forman **líneas y formaciones alargadas**
+- Se mueven de manera **extremadamente sincronizada**
+- Todos apuntan en casi la misma dirección
+- El grupo se ve como una **flecha o corriente**
+- Cambios de dirección son colectivos y dramáticos
+
+**Efecto visual**:
+- Parece un río fluyendo
+- Formación en "V" como aves migratorias
+- Movimiento muy fluido y direccional
+
+**Interpretación**:
+Al priorizar fuertemente la alineación, cada boid "imita" fuertemente la dirección de sus vecinos. Es como corredores en una carrera siguiendo al pelotón.
+
+**Aplicaciones potenciales**:
+- Simular aves migratorias
+- Tráfico vehicular en autopista
+- Movimiento de multitudes en una dirección
+
+---
+
+**Experimento 4: Cohesión cero**
+
+**Código modificado**:
+```javascript
+sep.mult(1.5);
+ali.mult(1.0);
+coh.mult(0.0);  // Cohesión DESACTIVADA
+```
+
+**Comportamiento observado**:
+- Los boids se **dispersan completamente**
+- No hay tendencia a formar grupos
+- Cada boid va "a su aire"
+- Movimiento caótico y desorganizado
+- Los boids llenan todo el canvas uniformemente
+
+**Efecto visual**:
+- Parece partículas brownianas
+- No hay grupos reconocibles
+- Distribución aleatoria por el espacio
+
+**Interpretación**:
+Sin cohesión, no hay "atracción" al grupo. La separación los empuja apart, pero nada los mantiene juntos. Es como personas que no se conocen en un espacio público.
+
+**Aplicaciones potenciales**:
+- Simular moléculas de gas
+- Individuos sin conexión social
+- Exploración aleatoria del espacio
+
+---
+
+**Experimento 5: Separación cero**
+
+**Código modificado**:
+```javascript
+sep.mult(0.0);  // Separación DESACTIVADA
+ali.mult(1.0);
+coh.mult(1.0);
+```
+
+**Comportamiento observado**:
+- Los boids se **amontonan y colisionan**
+- No respetan espacio personal
+- Se forma una **masa caótica** en el centro
+- Movimiento errático dentro del grupo
+- Algunos boids "rebotan" entre sí visualmente
+
+**Efecto visual**:
+- Parece una pelota de boids vibrando
+- Superposición visual de triángulos
+- Movimiento tembloroso
+
+**Interpretación**:
+Sin separación, los boids pierden su sentido de espacio personal. La cohesión los atrae pero nada los mantiene separados. Es como una multitud en concierto sin control.
+
+**Aplicaciones potenciales**:
+- Simular partículas que se atraen (moléculas)
+- Multitudes extremadamente densas
+- Comportamiento caótico
+
+---
+
+**Experimento 6: Balance diferente (comportamiento más realista)**
+
+**Código modificado**:
+```javascript
+sep.mult(2.0);  // Separación ligeramente más alta
+ali.mult(1.5);  // Alineación media-alta
+coh.mult(0.8);  // Cohesión ligeramente más baja
+```
+
+**Comportamiento observado**:
+- Comportamiento **muy natural** similar a pájaros reales
+- Buenos espacios entre boids
+- Movimiento fluido y coordinado
+- Grupos cohesivos pero no apretados
+- Transiciones suaves
+
+**Efecto visual**:
+- Parece una bandada de pájaros real
+- Elegante y orgánico
+- Placentero visualmente
+
+**Interpretación**:
+Este balance prioriza ligeramente evitar colisiones y moverse juntos en la misma dirección, mientras reduce un poco la atracción al centro. Produce el comportamiento más "natural".
+
+</details>
+
+[Ver en vivo en P5js](https://editor.p5js.org/DanieLudens/sketches/ZxA4EIz7r)
+
+|Experimento|Info|Muestra|
+|:---:|:--|:---|
+|Balance|Comportamiento muy natural|<img width="500" src="https://github.com/user-attachments/assets/11e56ef5-e76a-4c43-a1c0-c4e9cba52aa2">|
+|Separacion Alta|Se dispersan significativamente|<img width="500" src="https://github.com/user-attachments/assets/6f0b4b8b-3874-4bba-85d5-0a0bc7310fda">|
+|Separación Cero|Se amontonan y colisionan|<img width="500" src="https://github.com/user-attachments/assets/1e39e8aa-00f6-4ff6-94fe-851e814a6aef">|
+|Cohesión Alta|Forman grupos muy compactos|<img width="500" src="https://github.com/user-attachments/assets/8364f841-78bc-4353-9e8d-1b1c21b80164">|
+|Coheción Cero|Se dispersan completamente|<img width="500" src="https://github.com/user-attachments/assets/048cfe1b-81e3-4053-bcf1-5fdcecac02bf">|
+|Alineación Alta|Formaciones alargadas|<img width="500" src="https://github.com/user-attachments/assets/ed26e0ae-226b-456a-95f4-9b3a94ea84fe">|
+|Alineación Cero|Sin Formación aparente|<img width="500" src="https://github.com/user-attachments/assets/27fb3a87-9b41-47f3-af2b-11e0163b563d">|
 
 ## Apply: Aplicación 🛠
 
