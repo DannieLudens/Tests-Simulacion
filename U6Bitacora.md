@@ -34,6 +34,18 @@ En esta actividad propondré que te encuentres de nuevo el trabajo de [Tyler Hob
 > - ¿Qué te inspira de su trabajo?
 
 
+|Obra|Imagen|Que me inspira y ¿por qué llama mi atención?|
+|:---:|---|:---|
+|[Ectogenesis](https://www.tylerxhobbs.com/works/ectogenesis#info) 2019|<img width="300" src="https://github.com/user-attachments/assets/c919aa66-19cf-427f-86b2-f63d7b42807d" />|Me llama la atención que mezcla elementos para formar flow fields, ya no solo como una sola particula sino una serie de reglas para construir un organismo y que se muevan fluidos por el cuadro, aunque es estática genera una dinamismo al observarla y me imaginaria como fluiria si tuviera vida.|
+|[Catcher](https://www.tylerxhobbs.com/works/catcher#info) 2016|<img width="300" src="https://github.com/user-attachments/assets/cb8de7a7-a6ba-4f6f-95f8-70248980c58c" />|En Catcher refleja el dinamismo de la naturaleza y el viento afectando las plantas pero la obra en si es una representación de la naturaleza hasta que se acerca al lienzo y se nos damos cuenta que son lineas y puntos, me llama mucho la atención el comportamiento de las particulas ordenadas y armónicas|
+
+El trabajo de Tyler Hobbs me inspira por:
+
+1. **Simplicidad que genera complejidad**: Usa elementos básicos (puntos, líneas, curvas) pero crea obras visualmente ricas
+2. **Ilusión de vida**: Sus obras estáticas logran transmitir movimiento y dinamismo
+3. **Naturaleza algorítmica revelada**: No oculta que es arte generativo, celebra la belleza de los algoritmos
+4. **Balance entre control y caos**: Hay estructura, pero también variación orgánica
+
 ## Seek: Investigación 🔎
 
 > [!NOTE]
@@ -43,11 +55,43 @@ En esta actividad propondré que te encuentres de nuevo el trabajo de [Tyler Hob
 
 ### Actividad 02
 
-En esta actividad quiero que investigues alrededor de estas dos preguntas:
+En esta actividad quiero que investigues alrededor de estas tres preguntas:
 
-1. ¿Qué es una fuerza de dirección (steering force)?
-2. ¿Qué diferencia tiene este tipo de fuerza con las que ya hemos estudiado en el contexto de la simulación de agentes?
-3. ¿Qué relación tiene la steering force con Craig Reynolds y su trabajo en simulación de comportamiento animal?
+<details>
+<summary>❓ 1. ¿Qué es una fuerza de dirección (steering force)?</summary>
+
+### Definición
+Una **steering force** (fuerza de dirección) es una fuerza que le indica al agente "hacia dónde debería dirigirse" para alcanzar un comportamiento deseado. No es simplemente mover el agente a un punto, sino calcular la fuerza necesaria para que el agente SE DIRIJA hacia ese comportamiento de manera gradual y natural.
+
+#### Fórmula conceptual
+```
+steering = velocidad_deseada - velocidad_actual
+```
+
+#### Componentes
+
+- **Velocidad deseada**: Hacia dónde QUEREMOS que vaya el agente (dirección + velocidad ideal)
+- **Velocidad actual**: Hacia dónde va AHORA el agente
+- **Steering force**: La diferencia entre ambas - qué fuerza aplicar para "corregir el rumbo"
+
+#### Características importantes
+
+1. **Limitación de fuerza**: Se limita con un `maxforce` - el agente no puede girar instantáneamente, lo que genera movimientos más realistas
+2. **Movimientos naturales**: Produce trayectorias suaves y orgánicas, no saltos bruscos
+3. **Combinabilidad**: Permite comportamientos complejos combinando múltiples steering forces
+4. **Autonomía**: El agente "decide" su movimiento basándose en lo que percibe
+
+#### Ejemplo visual
+```
+Agente actual: →
+Objetivo:      ↗
+Steering:      ↑ (la fuerza que lo "jala" hacia arriba para corregir rumbo)
+```
+
+</details>
+
+3. ¿Qué diferencia tiene este tipo de fuerza con las que ya hemos estudiado en el contexto de la simulación de agentes?
+4. ¿Qué relación tiene la steering force con Craig Reynolds y su trabajo en simulación de comportamiento animal?
 
 
 > [!NOTE]
