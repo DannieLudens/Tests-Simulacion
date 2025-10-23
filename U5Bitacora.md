@@ -1655,8 +1655,11 @@ Documenta el proceso de creación, incluyendo la idea inicial, bocetos, experime
 
 8. Captura de pantallas de tu obra con las imágenes que más te gusten
 
+
+
 ## Corrientes de flujo musical - Arte generativo reactivo al audio
 
+<img width="1000" src="https://github.com/user-attachments/assets/a3fcc130-912a-4a0d-bff4-69d1e2d01d76">
 
 ### 📐 FASE 1: DISEÑO
 
@@ -1877,6 +1880,9 @@ Las barras de frecuencia usan exactamente los mismos rangos de color que las par
 </details>
 
 ---
+
+<img width="1000" src="https://github.com/user-attachments/assets/da77ab3d-2420-41f7-b375-5d8d988affab">
+
 
 ### 💻 FASE 2: IMPLEMENTACIÓN TÉCNICA
 
@@ -3281,6 +3287,9 @@ class TrebleMobile extends Mobile {
 
 ---
 
+<img width="1000" src="https://github.com/user-attachments/assets/c34d2466-31c2-474f-8966-dfacd0367669">
+
+
 ### 📸 FASE 3: CAPTURAS
 
 #### Capturas de Pantalla
@@ -3288,9 +3297,22 @@ class TrebleMobile extends Mobile {
 
 **🔗 Enlace p5.js:** [Ver en vivo](https://editor.p5js.org/DanieLudens/sketches/uMtu_LL9O)
 
-**🎵 Canción por defecto:** [Poshlaya molly - non stop](https://open.spotify.com/intl-es/track/3uMUdlo47oEes3kgL4T4EC?si=7c41d9e7b37b43e7) 
+**🎵 Canción por defecto:** [Enjoy the silence - Depeche Mode](https://open.spotify.com/intl-es/track/6WK9dVrRABMkUXFLNlgWFh?si=3c5ab583d13d48cb)
 
-<img width="500" src="https://github.com/user-attachments/assets/5e8666dc-4430-4c59-827f-5ee14e569b42">
+|Muestra|Descripción|
+|:---:|:---:|
+|<img width="500" src="https://github.com/user-attachments/assets/7e252b90-7a29-4cbc-a24d-88dce8fc8a67"> | Visualizacion completo con UI|
+|<img width="500" src="https://github.com/user-attachments/assets/912850a7-470f-4ea4-abf1-6bd145b98340"> | Toggle UI con botón o tecla 'U'|
+|<img width="500" src="https://github.com/user-attachments/assets/cab9ee42-78ba-4804-a217-f4c82e273f57"> | Intrucciones|
+|<img width="500" src="https://github.com/user-attachments/assets/0d979552-1a3e-4b2e-87ff-4c30bf62ce54"> | Información|
+|<img width="500" src="https://github.com/user-attachments/assets/edaa8168-e686-4fc4-b445-d60e162fb1d2"> | Barras de frecuencia |
+|<img width="500" src="https://github.com/user-attachments/assets/beaf9d48-498e-4d12-854b-856dca3677b6"> | Volumen = 0% = Solo Flow Field Pasivo|
+|<img width="500" src="https://github.com/user-attachments/assets/ba92051e-e1df-4185-99b4-a6ad870dd549"> | Volumen > 0% = Reactivo|
+|<img width="500" src="https://github.com/user-attachments/assets/c46b2ad8-460f-4ae2-a836-12b075a50cd3"> | Barra espaciadora o 'R' Reset = diferentes patrones|
+|<img width="500" src="https://github.com/user-attachments/assets/ba92a3f5-9ecd-4edc-a380-055acbf0ea90"> | una muestra de un patrón|
+
+
+
 
 
 
