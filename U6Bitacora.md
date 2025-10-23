@@ -673,7 +673,14 @@ Alta resolución + Bajo incremento = Movimiento muy suave pero computacionalment
    - Cambia significativamente la forma en que se generan los vectores del campo (ej: usa una fórmula matemática diferente en lugar de noise(), o cambia drásticamente los parámetros de noise()).
    - Modifica sustancialmente la resolución del campo de flujo (hazla mucho más fina o mucho más gruesa).
    - Altera considerablemente maxspeed o maxforce de los agentes.
-  
+
+> [!NOTE]
+> 🧐🧪✍️ Reporta en tu bitácora
+>
+> 1. Explica brevemente la estructura de datos usada para el campo de flujo y cómo se generan sus vectores.
+> 2. Describe con tus palabras cómo un agente utiliza el campo para calcular su fuerza de dirección.
+> 3. Lista los parámetros clave identificados (resolución, maxspeed, maxforce).
+> 4. Describe la modificación que realizaste al código y **explica detalladamente el efecto** que tuvo en el movimiento y comportamiento colectivo de los agentes. Incluye una captura de pantalla o GIF si ilustra bien el cambio. Muestra el fragmento de código modificado.
 
 <details>
 <summary>🧪 Paso 5: Experimentación con modificaciones</summary>
@@ -1122,8 +1129,6 @@ Esta experimentación demuestra que el mismo algoritmo puede generar comportamie
 
 </details>
 
-[Ver en vivo en p5js](https://editor.p5js.org/DanieLudens/sketches/Um319xIwj)
-
 <details>
 <summary>🔗 Código de experimentación modificado</summary>
 
@@ -1201,22 +1206,17 @@ if (key == "c" || key == "C") {
 }
 ```
 
-**Instrucciones de uso**
+</details>
+
 
 **Controles del sketch:**
 - **Barra espaciadora**: Toggle debug lines (mostrar/ocultar vectores)
 - **Click mouse**: Regenerar campo de flujo (solo afecta modo Perlin Noise)
 - **Tecla 'C'**: Cambiar entre modos (Noise → Espiral → Ondas → Circular → Noise...)
 
-</details>
+[Ver en vivo en p5js](https://editor.p5js.org/DanieLudens/sketches/Um319xIwj)
 
-> [!NOTE]
-> 🧐🧪✍️ Reporta en tu bitácora
->
-> 1. Explica brevemente la estructura de datos usada para el campo de flujo y cómo se generan sus vectores.
-> 2. Describe con tus palabras cómo un agente utiliza el campo para calcular su fuerza de dirección.
-> 3. Lista los parámetros clave identificados (resolución, maxspeed, maxforce).
-> 4. Describe la modificación que realizaste al código y **explica detalladamente el efecto** que tuvo en el movimiento y comportamiento colectivo de los agentes. Incluye una captura de pantalla o GIF si ilustra bien el cambio. Muestra el fragmento de código modificado.
+<img width="400" src="https://github.com/user-attachments/assets/59af22b9-4aa9-4efe-bc56-10feef51f1f4">
 
 
 ### Actividad 04
@@ -1233,18 +1233,332 @@ if (key == "c" || key == "C") {
 
 #### Pasos:
 
-1. **Ejecuta el ejemplo: **ejecuta el código del ejemplo principal de Flocking de TNoC en p5.js. Observa el movimiento colectivo de los “boids” (agentes).
+1. **Ejecuta el ejemplo:** ejecuta el código del ejemplo principal de Flocking de TNoC en p5.js. Observa el movimiento colectivo de los “boids” (agentes).
+
+<details>
+<summary>📋 Paso 1: Ejecutar el ejemplo</summary>
+
+**Comportamiento observado**
+
+**Configuración inicial:**
+- **120 boids** (agentes) representados como triángulos
+- Todos inician en el centro del canvas `(width/2, height/2)`
+- Cada boid tiene velocidad inicial aleatoria
+
+**Movimiento colectivo:**
+- Los boids comienzan dispersándose desde el centro
+- Gradualmente forman grupos cohesivos
+- Se mueven como una "bandada" o "cardumen"
+- El movimiento es fluido y orgánico
+- No hay líder - el comportamiento emerge de las interacciones locales
+
+**Características del comportamiento:**
+- **Cohesión**: Los boids tienden a agruparse
+- **Separación**: Mantienen espacio personal, evitan colisiones
+- **Alineación**: Se mueven en direcciones similares dentro del grupo
+- **Wraparound**: Los boids que salen por un borde aparecen por el opuesto
+
+**Controles interactivos**
+
+- **Arrastrar el mouse**: Agrega nuevos boids en la posición del cursor
+- Permite crear múltiples bandadas o aumentar la densidad del enjambre
+
+**Observaciones**
+
+El comportamiento interesante:
+- Con solo 3 reglas simples, los boids generan patrones
+- Se forman "bandadas" que se dividen y se vuelven a unir
+- El movimiento parece inteligente y coordinado
+- No hay comunicación global - cada boid solo "ve" a sus vecinos cercanos
+- Es imposible predecir el patrón exacto, pero el comportamiento general es consistente
+
+**Diferencia con Flow Fields:**
+- Flow Fields: Los agentes siguen un campo externo predefinido
+- Flocking: Los agentes responden a otros agentes (interacción social)
+
+</details>
 
 2. Identifica las tres reglas: en el código de la clase del agente (ej: Boid), localiza las funciones que implementan las tres reglas fundamentales del Flocking:
 
    - **Separación (Separation):** evitar el hacinamiento con vecinos cercanos.
    - **Alineación (Alignment):** dirigirse en la misma dirección promedio que los vecinos cercanos.
    - **Cohesión (Cohesion):** moverse hacia la posición promedio de los vecinos cercanos.
+
+
+<details>
+<summary>🔍 Paso 2: Identificar las tres reglas</summary>
+
+Las tres reglas fundamentales del Flocking están implementadas en la clase `Boid` en boid.js.
+
+**Ubicación en el código**
+
+La función `flock()` coordina las tres reglas:
+
+```javascript
+// En boid.js, líneas 31-43
+flock(boids) {
+  let sep = this.separate(boids); // Separation
+  let ali = this.align(boids);    // Alignment
+  let coh = this.cohere(boids);   // Cohesion
+
+  // Arbitrarily weight these forces
+  sep.mult(1.5);
+  ali.mult(1.0);
+  coh.mult(1.0);
+
+  // Add the force vectors to acceleration
+  this.applyForce(sep);
+  this.applyForce(ali);
+  this.applyForce(coh);
+}
+```
+
+---
+
+<ins><strong>Regla 1: Separación (Separation)</strong></ins>
+
+**Ubicación**: boid.js:95-126
+
+**Nombre de la función**: `separate(boids)`
+
+**Objetivo**: Evitar el hacinamiento con vecinos cercanos - mantener espacio personal
+
+**Parámetro clave**:
+```javascript
+let desiredSeparation = 25; // píxeles
+```
+
+**Lógica general**:
+1. Revisa todos los boids del sistema
+2. Identifica cuáles están demasiado cerca (distancia < 25)
+3. Para cada vecino cercano:
+   - Calcula un vector que apunta **alejándose** del vecino
+   - Normaliza el vector
+   - Lo pondera por distancia (más cerca = mayor fuerza)
+4. Promedia todos estos vectores de escape
+5. Convierte el promedio en una steering force
+
+**Pseudocódigo**:
+```
+Para cada boid en el sistema:
+  Si distancia > 0 Y distancia < 25:
+    Vector_escape = mi_posición - posición_vecino
+    Normalizar vector_escape
+    Dividir por distancia (más cerca = más fuerte)
+    Sumar a acumulador
+    Contar++
+
+Promedio = acumulador / contador
+Steering = (Promedio normalizado × maxspeed) - velocidad_actual
+Limitar steering a maxforce
+```
+
+---
+
+<ins><strong>Regla 2: Alineación (Alignment)</strong></ins>
+
+**Ubicación**: boid.js:128-151
+
+**Nombre de la función**: `align(boids)`
+
+**Objetivo**: Dirigirse en la misma dirección promedio que los vecinos cercanos
+
+**Parámetro clave**:
+```javascript
+let neighborDistance = 50; // píxeles
+```
+
+**Lógica general**:
+1. Revisa todos los boids del sistema
+2. Identifica vecinos dentro del radio de percepción (distancia < 50)
+3. Para cada vecino:
+   - Suma su **velocidad** (no posición)
+4. Calcula el promedio de velocidades
+5. Convierte ese promedio en una steering force
+
+**Pseudocódigo**:
+```
+Para cada boid en el sistema:
+  Si distancia > 0 Y distancia < 50:
+    Sumar velocidad del vecino
+    Contar++
+
+Si hay vecinos:
+  Promedio = suma_velocidades / contador
+  Normalizar promedio
+  Escalar a maxspeed
+  Steering = promedio - velocidad_actual
+  Limitar steering a maxforce
+Sino:
+  Steering = (0, 0)
+```
+
+**Diferencia clave**: Se promedian las **velocidades** (dirección de movimiento), no las posiciones.
+
+---
+
+<ins><strong>Regla 3: Cohesión (Cohesion)</strong></ins>
+
+**Ubicación**: boid.js:153-173
+
+**Nombre de la función**: `cohere(boids)`
+
+**Objetivo**: Moverse hacia la posición promedio (centro de masa) de los vecinos cercanos
+
+**Parámetro clave**:
+```javascript
+let neighborDistance = 50; // píxeles
+```
+
+**Lógica general**:
+1. Revisa todos los boids del sistema
+2. Identifica vecinos dentro del radio de percepción (distancia < 50)
+3. Para cada vecino:
+   - Suma su **posición**
+4. Calcula el promedio de posiciones (centro del grupo local)
+5. Usa la función `seek()` para dirigirse hacia ese punto
+
+**Pseudocódigo**:
+```
+Para cada boid en el sistema:
+  Si distancia > 0 Y distancia < 50:
+    Sumar posición del vecino
+    Contar++
+
+Si hay vecinos:
+  Centro_del_grupo = suma_posiciones / contador
+  Steering = seek(centro_del_grupo)
+Sino:
+  Steering = (0, 0)
+```
+
+**Diferencia clave**: Se promedian las **posiciones**, luego se hace `seek()` hacia ese punto.
+
+---
+
+**Función auxiliar: seek()**
+
+**Ubicación**: boid.js:58-67
+
+Esta función es usada por `cohere()` y calcula una steering force hacia un objetivo:
+
+```javascript
+seek(target) {
+  let desired = p5.Vector.sub(target, this.position);
+  desired.normalize();
+  desired.mult(this.maxspeed);
+  let steer = p5.Vector.sub(desired, this.velocity);
+  steer.limit(this.maxforce);
+  return steer;
+}
+```
+
+Es la misma fórmula de steering force que vimos en Flow Fields: `deseada - actual`.
+
+---
+
+**Resumen comparativo de las 3 reglas**
+
+| Regla | Qué promedia | Resultado | Efecto |
+|-------|--------------|-----------|--------|
+| **Separación** | Vectores de escape | Huir del centro local | Dispersión |
+| **Alineación** | Velocidades | Moverse en misma dirección | Sincronización |
+| **Cohesión** | Posiciones | Ir hacia centro local | Agrupación |
+
+**Interacción entre reglas**
+
+Las 3 reglas trabajan en **tensión**:
+- **Separación vs Cohesión**: Una empuja hacia afuera, otra hacia adentro → mantiene distancia óptima
+- **Alineación**: Sincroniza direcciones → crea movimiento coordinado
+- **Resultado**: Balance dinámico que produce comportamiento de bandada
+
+</details>
+
   
 3. **Explica las reglas:** para cada una de las tres reglas, explica con tus propias palabras:
 
    - ¿Cuál es el objetivo de la regla?
    -  ¿Cómo calcula el agente la fuerza de dirección correspondiente? (describe la lógica general, ej: “Calcula un vector apuntando lejos de los vecinos demasiado cercanos”).
+
+
+<details>
+<summary>💡 Paso 3: Explicar las reglas con mis palabras</summary>
+
+**Regla 1: Separación (Separation)**
+
+**¿Cuál es el objetivo?**
+
+Evitar que los boids choquen entre sí. Es como el "espacio personal" en una multitud - nadie quiere que alguien esté demasiado cerca. Esta regla hace que cada boid mantenga una distancia mínima con sus vecinos.
+
+**¿Cómo calcula la fuerza de dirección?**
+
+El boid mira a su alrededor y dice: "¿Quién está demasiado cerca de mí?" (distancia < 25 píxeles). Para cada vecino invasor, calcula un vector que apunta **alejándose** de ese vecino. Si hay múltiples vecinos cercanos, promedia todos los vectores de escape. Además, aplica una regla inteligente: **cuanto más cerca está el vecino, más fuerte es la fuerza de escape** (divide por la distancia).
+
+**Analogía**: Es como cuando caminas en una multitud - automáticamente te alejas de personas que están muy cerca.
+
+**Efecto visual**: Los boids nunca se amontonan ni chocan, mantienen un "colchón" de espacio.
+
+---
+
+**Regla 2: Alineación (Alignment)**
+
+**¿Cuál es el objetivo?**
+
+Moverse en la misma dirección que tus vecinos. Es como cuando corres con un grupo - naturalmente ajustas tu dirección para ir hacia donde va el grupo. Esta regla crea la sincronización del movimiento.
+
+**¿Cómo calcula la fuerza de dirección?**
+
+El boid observa a todos sus vecinos cercanos (dentro de 50 píxeles) y pregunta: "¿Hacia dónde se están moviendo ellos?" Suma las **velocidades** (no posiciones) de todos los vecinos, calcula el promedio, y genera una steering force para que su velocidad coincida con ese promedio.
+
+**Analogía**: Es como un corredor en el tour de francia que ajusta su ritmo y dirección para coincidir con el grupo cercano.
+
+**Efecto visual**: Todos los boids en un grupo apuntan y se mueven en direcciones similares, como peces en un cardumen.
+
+---
+
+**Regla 3: Cohesión (Cohesion)**
+
+**¿Cuál es el objetivo?**
+
+Mantenerse cerca del grupo. Es el instinto de "no quiero quedarme solo". Esta regla atrae a los boids hacia el centro de su grupo local, evitando que se dispersen completamente.
+
+**¿Cómo calcula la fuerza de dirección?**
+
+El boid mira a sus vecinos cercanos (dentro de 50 píxeles) y calcula la **posición promedio** de todos ellos - el "centro de masa" del grupo local. Luego usa una steering force para dirigirse suavemente hacia ese punto central, como si hubiera un imán débil atrayéndolo hacia el grupo.
+
+**Analogía**: Es como cuando las crias de pato, sientes el impulso de volver hacia donde está el grupo cuando se dan cuenta que estan alejados.
+
+**Efecto visual**: Los boids forman grupos compactos en lugar de dispersarse por todo el canvas.
+
+---
+
+**La magia de la interacción**
+
+Lo fascinante es que estas 3 reglas simples **compiten** entre sí:
+
+1. **Cohesión** dice: "¡Ven aquí, acércate al grupo!" → Atracción
+2. **Separación** dice: "¡No tan cerca!" → Repulsión
+3. **Alineación** dice: "¡Vamos todos en esta dirección!" → Coordinación
+
+El balance entre estas fuerzas crea un comportamiento emergente complejo:
+- No se amontonan (separación evita colisiones)
+- No se dispersan (cohesión mantiene el grupo)
+- Se mueven coordinadamente (alineación sincroniza)
+
+**Resultado**: Una bandada que se comporta como un organismo vivo, sin líder, sin plan central, solo reglas locales simples.
+
+**Observación personal**
+
+Al ejecutar el ejemplo, noté que:
+- Cuando hay pocos boids, cada uno tiene más "libertad" y el movimiento es menos coordinado
+- Cuando hay muchos boids, se forman grupos más compactos y el movimiento es más fluido
+- Los grupos pueden dividirse y reunirse dinámicamente
+- A veces se forman "mini bandadas" separadas que eventualmente se fusionan
+
+Esto demuestra el **comportamiento emergente**: propiedades del sistema que no están programadas explícitamente, sino que surgen de la interacción de componentes simples.
+
+</details>
+
   
 4. **Identifica parámetros clave:** localiza en el código las variables que controlan:
    - El radio (o distancia) de percepción (`perceptionRadius` o similar) que define quiénes son los “vecinos”. A veces también hay un ángulo de percepción.
@@ -1263,6 +1577,8 @@ if (key == "c" || key == "C") {
 > 1. Explica con tus palabras el objetivo y la lógica general de cálculo de cada una de las tres reglas de Flocking (Separación, Alineación, Cohesión).
 > 2. Lista los parámetros clave identificados (radio de percepción, pesos de las reglas, maxspeed, maxforce).
 > 3. Describe la modificación que realizaste al código y **explica detalladamente el efecto** que tuvo en el comportamiento colectivo del enjambre (¿Se dispersan? ¿Forman grupos compactos? ¿se mueven caóticamente?). Incluye una captura de pantalla o GIF si ilustra bien el cambio. Muestra el fragmento de código modificado.
+
+
 
 ## Apply: Aplicación 🛠
 
